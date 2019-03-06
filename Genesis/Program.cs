@@ -37,11 +37,12 @@ namespace FloodFill
 
         static void Run()
         {
-            var cols = Input("number of columns");
-            var rows = Input("number of rows");
-            var colors = Input("number of colours");
+            var cols = Input("number of columns", 10, 200);
+            var rows = Input("number of rows", 10, 50);
+            var colors = Input("number of colours", 2, 14);
             Console.WriteLine($"Generating grid with {cols} columns, {rows} rows and {colors} colors");
             var grid = new Grid(cols, rows, colors);
+            grid.RandomFill();
             var largestConnectedArea = grid.FindLargestConnectedArea();
             grid.Annotate(largestConnectedArea);
             grid.Render();
@@ -56,10 +57,23 @@ namespace FloodFill
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
-        private static int Input(string value)
+        private static int Input(string value, int defaultValue = 0, int maxValue = int.MaxValue)
         {
-            Console.WriteLine($"Enter {value}");
-            return int.Parse(Console.ReadLine());
+            do
+            {
+                Console.WriteLine($"Enter {value} (default: {defaultValue})");
+                var input = Console.ReadLine();
+                if (string.IsNullOrEmpty(input))
+                    return defaultValue;
+                else if (!int.TryParse(input, out var val))
+                    Console.WriteLine("Value is not a number!");
+                else if (val < 0)
+                    Console.WriteLine("Value is too low!");
+                else if (val > maxValue)
+                    Console.WriteLine("Value is too high!");
+                else return val;
+            }
+            while (true);
         }
     }
 }

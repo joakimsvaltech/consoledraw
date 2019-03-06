@@ -4,11 +4,7 @@ namespace FloodFill
 {
     public readonly struct Point : IEquatable<Point>
     {
-        public Point(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
+        public Point(int x, int y) => (X, Y) = (x, y);
 
         public static bool operator ==(Point left, Point right)
             => left.X == right.X && left.Y == right.Y;
@@ -21,6 +17,8 @@ namespace FloodFill
 
         public static Point operator %(Point left, Point right)
             => new Point(left.X % right.X, left.Y % right.Y);
+
+        public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 
         public int X { get; }
         public int Y { get; }
