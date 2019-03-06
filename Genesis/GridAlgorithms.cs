@@ -10,6 +10,12 @@ namespace FloodFill
             .OrderByDescending(area => area.Length)
             .FirstOrDefault();
 
+
+        public static IEnumerable<Cell> GetArea(this Grid grid, Point pos)
+        {
+            return new[] { grid[pos] };
+        }
+
         private static Cell[][] FindConnectedAreas(Grid grid)
         {
             var indices = new int[grid.Size.X, grid.Size.Y];

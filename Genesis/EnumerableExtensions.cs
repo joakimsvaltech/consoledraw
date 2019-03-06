@@ -13,5 +13,18 @@ namespace FloodFill
             foreach (var x in list)
                 action(x);
         }
+
+        public static IEnumerable<T> Interleave<T>(this IEnumerable<T> items, T separator)
+        {
+            var list = items.ToArray();
+            if (!list.Any())
+                yield break;
+            yield return list.First();
+            foreach (var item in list.Skip(1))
+            {
+                yield return separator;
+                yield return item;
+            }
+        }
     }
 }

@@ -21,12 +21,13 @@ namespace FloodFill
             Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
             ShowWindow(ThisConsole, MAXIMIZE);
 
-            Console.WriteLine("Hello FloodFill!");
+            Console.WriteLine("CONSOLE DRAW - 'Where your imagination becomes reality'");
+            Console.WriteLine("------------------------------------------------");
             do
             {
                 Run();
-                ResetColors();
-                Console.WriteLine("Press (A) to run again or any otehr key to quit");
+                Renderer.ResetColor();
+                Console.WriteLine("Press (A) to run again or any other key to quit");
                 var key = Console.ReadKey();
                 if (key.Key == ConsoleKey.A)
                     continue;
@@ -49,12 +50,6 @@ namespace FloodFill
             var originalPosition = grid.SetPosition();
             while (grid.Interact()) { }
             Console.SetCursorPosition(originalPosition.X, originalPosition.Y);
-        }
-
-        private static void ResetColors()
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.BackgroundColor = ConsoleColor.Black;
         }
 
         private static int Input(string value, int defaultValue = 0, int maxValue = int.MaxValue)

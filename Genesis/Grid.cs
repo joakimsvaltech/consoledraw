@@ -13,12 +13,13 @@ namespace FloodFill
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
         public Point Origin { get; private set; }
-        public int Colors { get; }
+        public int ColorCount { get; }
+        public IEnumerable<ConsoleColor> Colors => Enumerable.Range(1, ColorCount).Select(index => (ConsoleColor)index);
         public IEnumerable<Point> Positions => Points(Size);
 
-        public Grid(int cols, int rows, int colors)
-            => (Size, Colors, _cells)
-            = (new Point(cols, rows), colors, CreateCells(new Point(cols + 1, rows + 1)));
+        public Grid(int cols, int rows, int colorCount)
+            => (Size, ColorCount, _cells)
+            = (new Point(cols, rows), colorCount, CreateCells(new Point(cols + 1, rows + 1)));
 
         public Cell this[Point pos]
         {
@@ -26,9 +27,15 @@ namespace FloodFill
             set => _cells[pos.X, pos.Y] = value;
         }
 
+        public void SetColor(ConsoleColor color)
+        {
+            SelectedColor = color;
+            this.RenderCommands();
+        }
+
         public void RandomFill()
         {
-            Positions.ForEach(pos => this[pos] = GenerateCell(pos, Colors));
+            Positions.ForEach(pos => this[pos] = GenerateCell(pos, ColorCount));
         }
 
         public void Annotate(IEnumerable<Cell> area)
@@ -39,7 +46,7 @@ namespace FloodFill
         public Point SetPosition(int x = 0, int y = 0)
         {
             var originalPos = new Point(Console.CursorLeft, Console.CursorTop);
-            Current = new Point(x, y);
+            CurrentPos = new Point(x, y);
             return originalPos;
         }
 
@@ -50,10 +57,57 @@ namespace FloodFill
             else
                 Console.SetCursorPosition(Origin.X, Origin.Y);
             this.RenderRows();
+            this.RenderCommands();
         }
 
         public IEnumerable<Cell> Row(int rowIndex)
                 => _cells.Row(rowIndex);
+
+        public Cell CurrentCell => this[CurrentPos];
+
+        public Point CurrentPos
+        {
+            get => _current;
+            private set
+            {
+                this.RemoveMarker();
+                _current = value;
+                this.UpdateMarker();
+            }
+        }
+
+        public ConsoleColor SelectedColor { get; internal set; } = (ConsoleColor)1;
+
+        public void Up()
+        {
+            CurrentPos = (CurrentPos.Up + Size) % Size;
+        }
+
+        public void Down()
+        {
+            CurrentPos = CurrentPos.Down % Size;
+        }
+
+        public void Left()
+        {
+            CurrentPos = (CurrentPos.Left + Size) % Size;
+        }
+
+        public void Right()
+        {
+            CurrentPos = CurrentPos.Right % Size;
+        }
+
+        public void Fill()
+        {
+            var area = this.GetArea(CurrentPos);
+            this.Fill(area);
+        }
+
+        public void Plot()
+        {
+            this.Plot(SelectedColor);
+        }
 
         private static Cell[,] CreateCells(Point size)
         {
@@ -68,37 +122,6 @@ namespace FloodFill
             for (int x = 0; x < size.X; x++)
                 for (int y = 0; y < size.Y; y++)
                     yield return new Point(x, y);
-        }
-
-        public Point Current
-        {
-            get => _current;
-            private set
-            {
-                this.RemoveMarker();
-                _current = value;
-                this.UpdateMarker();
-            }
-        }
-
-        public void Up()
-        {
-            Current = (Current.Up + Size) % Size;
-        }
-
-        public void Down()
-        {
-            Current = Current.Down % Size;
-        }
-
-        public void Left()
-        {
-            Current = (Current.Left + Size) % Size;
-        }
-
-        public void Right()
-        {
-            Current = Current.Right % Size;
         }
 
         private static Cell GenerateCell(Point pos, int colors)

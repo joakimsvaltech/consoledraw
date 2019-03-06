@@ -15,6 +15,9 @@ namespace FloodFill
         public static Point operator +(Point left, Point right)
             => new Point(left.X + right.X, left.Y + right.Y);
 
+        public static Point operator +(Point left, int offsetY)
+            => new Point(left.X, left.Y + offsetY);
+
         public static Point operator %(Point left, Point right)
             => new Point(left.X % right.X, left.Y % right.Y);
 
