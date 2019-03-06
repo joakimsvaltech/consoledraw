@@ -9,6 +9,7 @@ namespace ConsoleDraw.Genesis
         private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
+        private bool isDrawing;
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -70,36 +71,61 @@ namespace ConsoleDraw.Genesis
         }
 
         public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;
+        public bool IsDrawing
+        {
+            get => isDrawing;
+            private set
+            {
+                isDrawing = value;
+                Draw();
+            }
+        }
+
+        public void ToggleIsDrawing()
+        {
+            IsDrawing = !IsDrawing;
+        }
 
         public void Up()
         {
             CurrentPos = (CurrentPos.Up + Size) % Size;
+            Draw();
         }
 
         public void Down()
         {
             CurrentPos = CurrentPos.Down % Size;
+            Draw();
         }
 
         public void Left()
         {
             CurrentPos = (CurrentPos.Left + Size) % Size;
+            Draw();
         }
 
         public void Right()
         {
             CurrentPos = CurrentPos.Right % Size;
+            Draw();
         }
 
         public void Fill()
         {
             var area = this.GetArea(CurrentPos);
             this.Fill(area);
+            this.UpdateMarker();
         }
 
         public void Plot()
         {
             this.Plot(SelectedColor);
+            this.UpdateMarker();
+        }
+
+        private void Draw()
+        {
+            if (IsDrawing) Plot();
         }
 
         private static Cell[,] CreateCells(Point size)

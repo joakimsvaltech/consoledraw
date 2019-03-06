@@ -25,8 +25,7 @@ namespace ConsoleDraw.Genesis
             return true;
         }
 
-        public IEnumerable<Action> CommandRenderers
-            => _commands.Values.Where(c => c.Render != null).Select(c => c.Render!);
+        public IEnumerable<Command> Commands => _commands.Values;
 
         private IDictionary<ConsoleKey, Command> GetCommands(Grid grid)
             => GetArrowCommands(grid)
@@ -34,29 +33,37 @@ namespace ConsoleDraw.Genesis
             .Concat(GetColorCommands(grid))
             .ToDictionary(c => c.Key, c => c);
 
-        private static Command[] GetArrowCommands(Grid grid)
+        private Command[] GetArrowCommands(Grid grid)
             => new[] {
             new Command(ConsoleKey.UpArrow, grid.Up),
             new Command(ConsoleKey.DownArrow, grid.Down),
             new Command(ConsoleKey.LeftArrow, grid.Left),
-            new Command(ConsoleKey.RightArrow, grid.Right),
+            new Command(ConsoleKey.RightArrow, grid.Right)
         };
 
-        private static Command[] GetActionCommands(Grid grid)
+        private Command[] GetActionCommands(Grid grid)
             => new Command[] {
             new Command("_Plot", grid.Plot),
+            new Command("_Draw", () => Draw(), () => grid.IsDrawing),
             new Command("_Fill", grid.Fill),
             new Command("E_xit", Exit),
         };
 
-        private IEnumerable<Command> GetColorCommands(Grid grid)
-            => grid.Colors.Select(color => CreateColorCommand(grid, color));
+        private void Draw() {
+            _grid.ToggleIsDrawing();
+            this.RenderCommands();
+        }
 
-        private Command CreateColorCommand(Grid grid, ConsoleColor color)
+        private IEnumerable<Command> GetColorCommands(Grid grid)
+            => grid.Colors.Select(color => CreateColorCommand(color));
+
+        private Command CreateColorCommand(ConsoleColor color)
             => new Command(
                 Enum.Parse<ConsoleKey>($"D{(int)color}"),
                 () => SetColor(color),
-                () => RenderColorCommand(grid, color));
+                $"{(int)color}",
+                () => RenderColorCommand(color),
+                () => _grid.SelectedColor == color);
 
         private void SetColor(ConsoleColor color)
         {
@@ -64,15 +71,10 @@ namespace ConsoleDraw.Genesis
             this.RenderCommands();
         }
 
-        private static void RenderColorCommand(Grid grid, ConsoleColor color)
+        private static void RenderColorCommand(ConsoleColor color)
         {
-            if (grid.SelectedColor == color)
-                Renderer.SetColor(ConsoleColor.White, ConsoleColor.Black);
-            else
-                Renderer.ResetColor();
-            Console.Write($"{(int)color}. ");
             Renderer.SetColor(color);
-            Console.Write($"{color}");
+            Console.Write($". {color}");
         }
 
         private Action GetOperation()
