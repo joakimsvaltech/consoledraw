@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FloodFill
+namespace ConsoleDraw.Genesis
 {
     public class Grid
     {
@@ -25,12 +25,6 @@ namespace FloodFill
         {
             get => _cells[pos.X, pos.Y];
             set => _cells[pos.X, pos.Y] = value;
-        }
-
-        public void SetColor(ConsoleColor color)
-        {
-            SelectedColor = color;
-            this.RenderCommands();
         }
 
         public void RandomFill()
@@ -57,7 +51,6 @@ namespace FloodFill
             else
                 Console.SetCursorPosition(Origin.X, Origin.Y);
             this.RenderRows();
-            this.RenderCommands();
         }
 
         public IEnumerable<Cell> Row(int rowIndex)
@@ -76,7 +69,7 @@ namespace FloodFill
             }
         }
 
-        public ConsoleColor SelectedColor { get; internal set; } = (ConsoleColor)1;
+        public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;
 
         public void Up()
         {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FloodFill
+namespace ConsoleDraw.Genesis
 {
     public static class Renderer
     {
@@ -13,6 +13,11 @@ namespace FloodFill
         {
             Console.BackgroundColor = bg;
             Console.ForegroundColor = fg;
+        }
+
+        public static void PositionCursor(Point absPos)
+        {
+            Console.SetCursorPosition(absPos.X, absPos.Y);
         }
     }
 }

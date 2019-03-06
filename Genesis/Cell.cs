@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace FloodFill
+namespace ConsoleDraw.Genesis
 {
     public class Cell
     {
@@ -33,5 +33,5 @@ namespace FloodFill
             };
 
         public override string ToString() => $"{Pos}:{Tag}{ColorIndex}";
-}
+    }
 }

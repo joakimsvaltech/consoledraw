@@ -1,31 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace FloodFill
+namespace ConsoleDraw.Genesis
 {
-
     public static class GridRenderer
     {
-
         public static void RenderRows(this Grid grid)
         {
             for (int y = 0; y < grid.Size.Y; y++)
                 PrintGridLine(grid.Row(y));
         }
 
-        public static void RenderCommands(this Grid grid)
-        {
-            PositionCursor(grid.Origin + grid.Size.Y + 1);
-            grid.ColorCommands()
-                .Concat(ActionCommands)
-                .Interleave(RenderSeparator)
-                .ForEach(render => render());
-        }
-
         public static void UpdateMarker(this Grid grid)
         {
-            PositionCursor(grid.Origin + grid.CurrentPos);
+            Renderer.PositionCursor(grid.Origin + grid.CurrentPos);
             MarkGridCell(grid[grid.CurrentPos]);
         }
 
@@ -48,48 +36,11 @@ namespace FloodFill
             area.ForEach(cell => grid.Plot(cell));
         }
 
-        private static IEnumerable<Action> ColorCommands(this Grid grid) => grid.Colors
-                .Select(color => (Action)(() => grid.ColorCommand((int)color, color)));
-
-        private static IEnumerable<Action> ActionCommands => ActionLabels().Select(l => (Action)(() => ActionCommand(l)));
-
-        private static IEnumerable<string> ActionLabels()
-        {
-            yield return "_Plot";
-            yield return "_Fill";
-            yield return "E_xit";
-        }
-
-        private static void ColorCommand(this Grid grid, int index, ConsoleColor color)
-        {
-            if (grid.SelectedColor == color)
-                Renderer.SetColor(ConsoleColor.White, ConsoleColor.Black);
-            else
-                Renderer.ResetColor();
-            Console.Write($"{index}. ");
-            Renderer.SetColor(color);
-            Console.Write($"{color}");
-        }
-
-        private static void ActionCommand(string label)
-        {
-            Renderer.ResetColor();
-            var tag = char.ToUpper(label[label.IndexOf('_') + 1]);
-            var name = label.Replace("_", "");
-            Console.Write($"{tag}. {name}");
-        }
-
-        private static void RenderSeparator()
-        {
-            Renderer.ResetColor();
-            Console.Write(" | ");
-        }
-
         private static void Plot(this Grid grid, Point pos) => grid.Plot(grid[pos]);
 
         private static void Plot(this Grid grid, Cell cell)
         {
-            PositionCursor(grid.Origin + cell.Pos);
+            Renderer.PositionCursor(grid.Origin + cell.Pos);
             PrintGridCell(cell);
         }
 
@@ -98,11 +49,6 @@ namespace FloodFill
             foreach (var cell in row)
                 PrintGridCell(cell);
             Console.WriteLine();
-        }
-
-        private static void PositionCursor(Point absPos)
-        {
-            Console.SetCursorPosition(absPos.X, absPos.Y);
         }
 
         private static void PrintGridCell(Cell cell) => Render(cell, (ConsoleColor)cell.ColorIndex, ConsoleColor.White);

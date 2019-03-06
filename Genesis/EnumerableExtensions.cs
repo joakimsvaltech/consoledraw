@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FloodFill
+namespace ConsoleDraw.Genesis
 {
-    public static class EnumerableExtensions {
+    public static class EnumerableExtensions
+    {
         public static IEnumerable<TCell> Row<TCell>(this TCell[,] grid, int y)
             => Enumerable.Range(0, grid.GetLength(0)).Select(x => grid[x, y]);
 

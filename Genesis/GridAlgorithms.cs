@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace FloodFill
+namespace ConsoleDraw.Genesis
 {
     public static class GridAlgorithms
     {
@@ -39,12 +39,12 @@ namespace FloodFill
             }
             var areas = new Dictionary<int, List<Cell>>();
             foreach (Point pos in grid.Positions)
-                {
-                    var areaIndex = indices[pos.X, pos.Y];
-                    if (!areas.TryGetValue(areaIndex, out var area))
-                        areas[areaIndex] = area = new List<Cell>();
-                    area.Add(grid[pos]);
-                }
+            {
+                var areaIndex = indices[pos.X, pos.Y];
+                if (!areas.TryGetValue(areaIndex, out var area))
+                    areas[areaIndex] = area = new List<Cell>();
+                area.Add(grid[pos]);
+            }
             return areas
                 .OrderByDescending(p => p.Value.Count)
                 .Select((p, i) => p.Value.Select(c => c.Clone((char)(65 + i))).ToArray())

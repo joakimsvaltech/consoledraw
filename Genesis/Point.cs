@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FloodFill
+namespace ConsoleDraw.Genesis
 {
     public readonly struct Point : IEquatable<Point>
     {
@@ -35,7 +35,7 @@ namespace FloodFill
         public Point Right => new Point(X + 1, Y);
 
         public override bool Equals(object obj)
-            => obj is Point p && Equals(p); 
+            => obj is Point p && Equals(p);
 
         public bool Equals(Point other)
             => other.X == X && other.Y == Y;
