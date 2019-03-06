@@ -10,10 +10,19 @@ namespace ConsoleDraw.Genesis
             .OrderByDescending(area => area.Length)
             .FirstOrDefault();
 
-
-        public static IEnumerable<Cell> GetArea(this Grid grid, Point pos)
+        public static IEnumerable<Cell> GetArea(this Grid grid, Point center)
         {
-            return new[] { grid[pos] };
+            var next = grid[center];
+            var color = next.ColorIndex;
+            var area = new HashSet<Cell> { next };
+            var neighbours = new Stack<Cell>(next.Neighbours(grid).Where(n => n.ColorIndex == color));
+            while (neighbours.Any())
+            {
+                next = neighbours.Pop();
+                area.Add(next);
+                next.Neighbours(grid).Where(n => n.ColorIndex == color).Except(area).ForEach(n => neighbours.Push(n));
+            }
+            return area;
         }
 
         private static Cell[][] FindConnectedAreas(Grid grid)
