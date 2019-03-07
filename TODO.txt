@@ -1,7 +1,3 @@
-Fix black spot
-Escape Rectangle mode
-Mark R
-Only color colorname in command
 Filled circle
 Undo
 Redo
@@ -14,3 +10,7 @@ Tests
 
 Done
 Filled rectangle
+Fix black spot
+Mark R
+Escape Rectangle mode
+Only color colorname in command

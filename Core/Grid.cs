@@ -4,13 +4,17 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
+    public enum DrawMode {
+        None, Drawing, Rectangle
+    } 
+
     public class Grid
     {
         private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
-        private bool isDrawing;
         private Rectangle? _activeRectangle;
+        private DrawMode _mode;
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -57,8 +61,8 @@ namespace ConsoleDraw.Core
 
         internal void FillRectangle()
         {
-            if (ActiveRectangle == null) return;
-            ActiveRectangle!.Points.ForEach(Paint);
+            if (Mode != DrawMode.Rectangle) return;
+            _activeRectangle!.Points.ForEach(Paint);
             this.UpdateMarker();
         }
 
@@ -74,39 +78,40 @@ namespace ConsoleDraw.Core
             {
                 this.RemoveMarker();
                 _current = value;
-                if (IsDrawing) Plot();
+                if (Mode == DrawMode.Drawing)
+                    Plot();
                 UpdateActiveRectangle();
                 this.UpdateMarker();
             }
         }
 
-        public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;
-        public bool IsDrawing
+        public void ToggleDraw()
         {
-            get => isDrawing;
-            private set
-            {
-                isDrawing = value;
-                if (IsDrawing) Plot();
-            }
+            Mode = Mode == DrawMode.Drawing ? DrawMode.None : DrawMode.Drawing;
         }
 
-        internal Rectangle? ActiveRectangle
+        public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;
+        public DrawMode Mode
         {
-            get => _activeRectangle;
+            get => _mode;
             set
             {
-                if (_activeRectangle != null)
+                if (value == _mode)
+                    return;
+                if (_mode == DrawMode.Rectangle)
+                {
                     this.Unmark(_activeRectangle);
-                _activeRectangle = value;
-                if (_activeRectangle != null)
+                    _activeRectangle = null;
+                }
+                _mode = value;
+                if (_mode == DrawMode.Drawing)
+                    Plot();
+                else if (_mode == DrawMode.Rectangle)
+                {
+                    _activeRectangle = new Rectangle(CurrentPos);
                     this.Mark(_activeRectangle);
+                }
             }
-        }
-
-        public void ToggleIsDrawing()
-        {
-            IsDrawing = !IsDrawing;
         }
 
         public void Up()
@@ -145,11 +150,11 @@ namespace ConsoleDraw.Core
 
         private void UpdateActiveRectangle()
         {
-            if (ActiveRectangle == null)
+            if (Mode != DrawMode.Rectangle)
                 return;
-            this.Unmark(ActiveRectangle);
-            ActiveRectangle.End = CurrentPos;
-            this.Mark(ActiveRectangle);
+            this.Unmark(_activeRectangle);
+            _activeRectangle!.End = CurrentPos;
+            this.Mark(_activeRectangle);
         }
 
         private void Paint(Point pos)
@@ -162,7 +167,10 @@ namespace ConsoleDraw.Core
         {
             var cells = new Cell[size.X, size.Y];
             foreach (var pos in Points(size))
-                cells[pos.X, pos.Y] = new Cell();
+                cells[pos.X, pos.Y] = new Cell
+                {
+                    Pos = pos
+                };
             return cells;
         }
 

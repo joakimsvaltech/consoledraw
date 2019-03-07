@@ -24,6 +24,8 @@ namespace ConsoleDraw.Core
             else
                 Renderer.ResetColor();
             Console.Write(command.Tag);
+            Renderer.ResetColor();
+            Console.Write(". ");
             command.RenderName!();
         }
 

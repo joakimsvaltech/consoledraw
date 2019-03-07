@@ -7,7 +7,7 @@ namespace ConsoleDraw.Core
     {
         private Point end;
 
-        public Rectangle(Point start, Point end) => (Start, End) = (start, end);
+        public Rectangle(Point start, Point? end = null) => (Start, End) = (start, end ?? start);
 
         public Point Start { get; }
         public Point End

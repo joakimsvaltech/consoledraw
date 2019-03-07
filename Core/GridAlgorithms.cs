@@ -36,7 +36,7 @@ namespace ConsoleDraw.Core
 
         private static Cell[][] FindConnectedAreas(Grid grid)
         {
-            var indices = new int[grid.Size.X, grid.Size.Y];
+            var indices = new int[grid.Size.X + 1, grid.Size.Y + 1];
             var nextIndex = 1;
             foreach (var cell in grid.Cells)
             {

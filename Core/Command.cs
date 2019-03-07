@@ -20,7 +20,7 @@ namespace ConsoleDraw.Core
         {
             var name = label.Replace("_", "");
             Renderer.ResetColor();
-            Console.Write($". {name}");
+            Console.Write($"{name}");
         }
 
         private static ConsoleKey GetKey(string label) => Enum.Parse<ConsoleKey>(GetTag(label));

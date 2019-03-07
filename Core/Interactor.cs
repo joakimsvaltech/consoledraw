@@ -44,34 +44,44 @@ namespace ConsoleDraw.Core
         private Command[] GetActionCommands(Grid grid)
             => new Command[] {
             new Command("_Plot", grid.Plot),
-            new Command("_Draw", () => Draw(), () => _grid.IsDrawing),
-            new Command("_Rectangle", () => Rectangle(), () => _grid.ActiveRectangle != null),
+            new Command("_Draw", ToggleDraw, () => _grid.Mode == DrawMode.Drawing),
+            new Command("_Rectangle", ToggleRectangle, () => IsRectangle),
             new Command("_Fill", grid.Fill),
+            new Command(ConsoleKey.Escape, Escape, "Esc", () => Render("Escape")),
             new Command("E_xit", Exit),
         };
 
-        private void Rectangle()
+        private void ToggleRectangle()
         {
-            if (_grid.ActiveRectangle == null)
-                CreateRectangle();
-            else
+            if (IsRectangle)
                 FillRectangle();
+            else
+                CreateRectangle();
+            this.RenderCommands();
+        }
+
+        private bool IsRectangle => _grid.Mode == DrawMode.Rectangle;
+
+        private void Escape()
+        {
+            _grid.Mode = DrawMode.None;
+            this.RenderCommands();
         }
 
         private void CreateRectangle()
         {
-            _grid.ActiveRectangle = new Rectangle(_grid.CurrentPos, _grid.CurrentPos);
+            _grid.Mode = DrawMode.Rectangle;
         }
 
         private void FillRectangle()
         {
             _grid.FillRectangle();
-            _grid.ActiveRectangle = null;
+            _grid.Mode = DrawMode.None;
         }
 
-        private void Draw()
+        private void ToggleDraw()
         {
-            _grid.ToggleIsDrawing();
+            _grid.ToggleDraw();
             this.RenderCommands();
         }
 
@@ -83,7 +93,7 @@ namespace ConsoleDraw.Core
                 Enum.Parse<ConsoleKey>($"D{(int)color}"),
                 () => SetColor(color),
                 $"{(int)color}",
-                () => RenderColorCommand(color),
+                () => RenderColorCommandName(color),
                 () => _grid.SelectedColor == color);
 
         private void SetColor(ConsoleColor color)
@@ -92,10 +102,15 @@ namespace ConsoleDraw.Core
             this.RenderCommands();
         }
 
-        private static void RenderColorCommand(ConsoleColor color)
+        private static void RenderColorCommandName(ConsoleColor color)
         {
             Renderer.SetColor(color);
-            Console.Write($". {color}");
+            Render($"{color}");
+        }
+
+        private static void Render(string text)
+        {
+            Console.Write(text);
         }
 
         private Action GetOperation()
