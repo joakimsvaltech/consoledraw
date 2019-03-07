@@ -1,4 +1,4 @@
-Undo
+Undo remaining
 Redo
 Show enable commands
 Save
@@ -9,6 +9,8 @@ Project structure
 Tests
 
 Done
+-----------
+Undo Plot
 Filled circle
 Filled rectangle
 Fix black spot
