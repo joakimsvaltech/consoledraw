@@ -28,19 +28,19 @@ namespace ConsoleDraw.Core
             area.ForEach(cell => grid.Plot(cell));
         }
 
-        public static void Unmark(this Grid grid, Rectangle? rect)
+        public static void Unmark(this Grid grid, IShape? shape)
         {
-            if (rect == null)
+            if (shape == null)
                 return;
-            foreach (var pos in rect.Outline)
+            foreach (var pos in shape.Outline)
                 grid.Plot(pos);
         }
 
-        public static void Mark(this Grid grid, Rectangle? rect)
+        public static void Mark(this Grid grid, IShape? shape)
         {
-            if (rect == null)
+            if (shape == null)
                 return;
-            foreach (var pos in rect.Outline)
+            foreach (var pos in shape.Outline)
                 grid.Mark(pos);
         }
 

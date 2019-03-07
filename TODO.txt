@@ -1,4 +1,3 @@
-Filled circle
 Undo
 Redo
 Save
@@ -9,6 +8,7 @@ Project structure
 Tests
 
 Done
+Filled circle
 Filled rectangle
 Fix black spot
 Mark R

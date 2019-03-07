@@ -46,21 +46,39 @@ namespace ConsoleDraw.Core
             new Command("_Plot", grid.Plot),
             new Command("_Draw", ToggleDraw, () => _grid.Mode == DrawMode.Drawing),
             new Command("_Rectangle", ToggleRectangle, () => IsRectangle),
+            new Command("_Ellipse", ToggleEllipse, () => IsEllipse),
             new Command("_Fill", grid.Fill),
+            new Command(ConsoleKey.Enter, Enter, "Enter", () => Render("Fill shape")),
             new Command(ConsoleKey.Escape, Escape, "Esc", () => Render("Escape")),
             new Command("E_xit", Exit),
         };
-
+        
         private void ToggleRectangle()
         {
             if (IsRectangle)
-                FillRectangle();
+                FillShape();
             else
-                CreateRectangle();
+                _grid.Mode = DrawMode.Rectangle;
+            this.RenderCommands();
+        }
+
+        private void ToggleEllipse()
+        {
+            if (IsEllipse)
+                FillShape();
+            else
+                _grid.Mode = DrawMode.Ellipse;
             this.RenderCommands();
         }
 
         private bool IsRectangle => _grid.Mode == DrawMode.Rectangle;
+        private bool IsEllipse => _grid.Mode == DrawMode.Ellipse;
+
+        private void Enter()
+        {
+            FillShape();
+            this.RenderCommands();
+        }
 
         private void Escape()
         {
@@ -68,14 +86,9 @@ namespace ConsoleDraw.Core
             this.RenderCommands();
         }
 
-        private void CreateRectangle()
+        private void FillShape()
         {
-            _grid.Mode = DrawMode.Rectangle;
-        }
-
-        private void FillRectangle()
-        {
-            _grid.FillRectangle();
+            _grid.FillShape();
             _grid.Mode = DrawMode.None;
         }
 

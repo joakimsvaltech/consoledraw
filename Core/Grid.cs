@@ -5,7 +5,7 @@ using System.Linq;
 namespace ConsoleDraw.Core
 {
     public enum DrawMode {
-        None, Drawing, Rectangle
+        None, Drawing, Rectangle, Ellipse
     } 
 
     public class Grid
@@ -13,7 +13,7 @@ namespace ConsoleDraw.Core
         private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
-        private Rectangle? _activeRectangle;
+        private IShape? _activeShape;
         private DrawMode _mode;
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
@@ -59,10 +59,10 @@ namespace ConsoleDraw.Core
             GridRenderer.Render(this);
         }
 
-        internal void FillRectangle()
+        internal void FillShape()
         {
-            if (Mode != DrawMode.Rectangle) return;
-            _activeRectangle!.Points.ForEach(Paint);
+            if (Mode != DrawMode.Rectangle && Mode != DrawMode.Ellipse) return;
+            _activeShape!.Points.ForEach(Paint);
             this.UpdateMarker();
         }
 
@@ -80,7 +80,7 @@ namespace ConsoleDraw.Core
                 _current = value;
                 if (Mode == DrawMode.Drawing)
                     Plot();
-                UpdateActiveRectangle();
+                UpdateActiveShape();
                 this.UpdateMarker();
             }
         }
@@ -98,21 +98,28 @@ namespace ConsoleDraw.Core
             {
                 if (value == _mode)
                     return;
-                if (_mode == DrawMode.Rectangle)
+                if (_mode == DrawMode.Rectangle || _mode == DrawMode.Ellipse)
                 {
-                    this.Unmark(_activeRectangle);
-                    _activeRectangle = null;
+                    this.Unmark(_activeShape);
+                    _activeShape = null;
                 }
                 _mode = value;
                 if (_mode == DrawMode.Drawing)
                     Plot();
-                else if (_mode == DrawMode.Rectangle)
+                if (_mode == DrawMode.Rectangle || _mode == DrawMode.Ellipse)
                 {
-                    _activeRectangle = new Rectangle(CurrentPos);
-                    this.Mark(_activeRectangle);
+                    _activeShape = CreateShape();
+                    this.Mark(_activeShape);
                 }
             }
         }
+
+        private IShape CreateShape() => Mode switch
+        {
+            DrawMode.Rectangle => (IShape)new Rectangle(CurrentPos),
+            DrawMode.Ellipse => new Ellipse(CurrentPos),
+            _ => throw new NotImplementedException($"{Mode} is not a shape")
+        };
 
         public void Up()
         {
@@ -148,13 +155,13 @@ namespace ConsoleDraw.Core
             this.UpdateMarker();
         }
 
-        private void UpdateActiveRectangle()
+        private void UpdateActiveShape()
         {
-            if (Mode != DrawMode.Rectangle)
+            if (Mode != DrawMode.Rectangle && Mode != DrawMode.Ellipse)
                 return;
-            this.Unmark(_activeRectangle);
-            _activeRectangle!.End = CurrentPos;
-            this.Mark(_activeRectangle);
+            this.Unmark(_activeShape);
+            _activeShape!.End = CurrentPos;
+            this.Mark(_activeShape);
         }
 
         private void Paint(Point pos)

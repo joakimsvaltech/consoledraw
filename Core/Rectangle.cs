@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public class Rectangle
+    public class Rectangle : IShape
     {
         private Point end;
 

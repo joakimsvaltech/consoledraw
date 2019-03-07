@@ -21,7 +21,6 @@ namespace ConsoleDraw.Genesis
         {
             Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
             ShowWindow(ThisConsole, MAXIMIZE);
-
             Console.WriteLine("CONSOLE DRAW - 'Where your imagination becomes reality'");
             Console.WriteLine("------------------------------------------------");
             do
