@@ -15,19 +15,9 @@ namespace ConsoleDraw.Core
         }
 
         private static IEnumerable<Action> GetCommandRenderers(this Interactor interactor)
-            => interactor.Commands.Where(c => c.RenderName != null).Select(command => (Action)(() => Render(command)));
-
-        private static void Render(Command command)
-        {
-            if (command.IsActive())
-                Renderer.SetColor(ConsoleColor.White, ConsoleColor.Black);
-            else
-                Renderer.ResetColor();
-            Console.Write(command.Tag);
-            Renderer.ResetColor();
-            Console.Write(". ");
-            command.RenderName!();
-        }
+            => interactor.Commands
+            .Where(com => com.CanRender)
+            .Select(com => (Action)com.Render);
 
         private static void RenderSeparator()
         {

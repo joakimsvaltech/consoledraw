@@ -6,11 +6,8 @@ namespace ConsoleDraw.Core
 {
     public class Interactor
     {
-        private static readonly Action Exit = () => { };
-        private static readonly Action NoOp = () => { };
-
         private readonly Grid _grid;
-        private readonly IDictionary<ConsoleKey, Command> _commands;
+        private readonly IDictionary<ConsoleKey, ICommand> _commands;
 
         public Interactor(Grid grid) => (_grid, _commands) = (grid, GetCommands(grid));
 
@@ -18,41 +15,50 @@ namespace ConsoleDraw.Core
 
         public bool Interact()
         {
-            var op = GetOperation();
-            if (op == Exit)
+            var command = GetCommand();
+            if (command == null)
+                return true;
+            if (command is ExitCommand)
                 return false;
-            op();
+            _grid.Perform(command.CreateOperation());
+            this.RenderCommands();
             return true;
         }
 
-        internal IEnumerable<Command> Commands => _commands.Values;
+        internal IEnumerable<ICommand> Commands => _commands.Values;
 
-        private IDictionary<ConsoleKey, Command> GetCommands(Grid grid)
+        private IDictionary<ConsoleKey, ICommand> GetCommands(Grid grid)
             => GetArrowCommands(grid)
             .Concat(GetActionCommands(grid))
             .Concat(GetColorCommands(grid))
             .ToDictionary(c => c.Key, c => c);
 
-        private Command[] GetArrowCommands(Grid grid)
+        private ICommand[] GetArrowCommands(Grid grid)
             => new[] {
-            new Command(ConsoleKey.UpArrow, grid.Up),
-            new Command(ConsoleKey.DownArrow, grid.Down),
-            new Command(ConsoleKey.LeftArrow, grid.Left),
-            new Command(ConsoleKey.RightArrow, grid.Right)
+            new NavigationCommand(ConsoleKey.UpArrow, grid.Up),
+            new NavigationCommand(ConsoleKey.DownArrow, grid.Down),
+            new NavigationCommand(ConsoleKey.LeftArrow, grid.Left),
+            new NavigationCommand(ConsoleKey.RightArrow, grid.Right)
         };
 
-        private Command[] GetActionCommands(Grid grid)
-            => new Command[] {
-            new Command("_Plot", grid.Plot),
-            new Command("_Draw", ToggleDraw, () => _grid.Mode == DrawMode.Drawing),
-            new Command("_Rectangle", ToggleRectangle, () => IsRectangle),
-            new Command("_Ellipse", ToggleEllipse, () => IsEllipse),
-            new Command("_Fill", grid.Fill),
-            new Command(ConsoleKey.Enter, Enter, "Enter", () => Render("Fill shape")),
-            new Command(ConsoleKey.Escape, Escape, "Esc", () => Render("Escape")),
-            new Command("E_xit", Exit),
+        private ICommand[] GetActionCommands(Grid grid)
+            => new ICommand[] {
+            new Plot(grid),
+            new ModeCommand("_Draw", ToggleDraw, () => _grid.Mode == DrawMode.Drawing),
+            new ModeCommand("_Rectangle", ToggleRectangle, () => IsRectangle),
+            new ModeCommand("_Ellipse", ToggleEllipse, () => IsEllipse),
+            new ActionCommand("_Fill", grid.Fill),
+            new ActionCommand(ConsoleKey.Enter, Enter, "Enter", "Fill shape"),
+            new ActionCommand(ConsoleKey.Escape, Escape, "Esc", "Escape"),
+            new UndoCommand(Undo),
+            new ExitCommand(),
         };
-        
+
+        private void Undo()
+        {
+            _grid.Undo();
+        }
+
         private void ToggleRectangle()
         {
             if (IsRectangle)
@@ -77,13 +83,11 @@ namespace ConsoleDraw.Core
         private void Enter()
         {
             FillShape();
-            this.RenderCommands();
         }
 
         private void Escape()
         {
             _grid.Mode = DrawMode.None;
-            this.RenderCommands();
         }
 
         private void FillShape()
@@ -95,41 +99,18 @@ namespace ConsoleDraw.Core
         private void ToggleDraw()
         {
             _grid.ToggleDraw();
-            this.RenderCommands();
         }
 
-        private IEnumerable<Command> GetColorCommands(Grid grid)
-            => grid.Colors.Select(color => CreateColorCommand(color));
+        private IEnumerable<ColorCommand> GetColorCommands(Grid grid)
+            => grid.Colors.Select(color => CreateColorCommand(grid, color));
 
-        private Command CreateColorCommand(ConsoleColor color)
-            => new Command(
-                Enum.Parse<ConsoleKey>($"D{(int)color}"),
-                () => SetColor(color),
-                $"{(int)color}",
-                () => RenderColorCommandName(color),
-                () => _grid.SelectedColor == color);
+        private ColorCommand CreateColorCommand(Grid grid, ConsoleColor color)
+            => new ColorCommand(grid, color);
 
-        private void SetColor(ConsoleColor color)
-        {
-            _grid.SelectedColor = color;
-            this.RenderCommands();
-        }
+        private ICommand? GetCommand()
+            => GetCommand(Console.ReadKey(true));
 
-        private static void RenderColorCommandName(ConsoleColor color)
-        {
-            Renderer.SetColor(color);
-            Render($"{color}");
-        }
-
-        private static void Render(string text)
-        {
-            Console.Write(text);
-        }
-
-        private Action GetOperation()
-            => GetOperation(Console.ReadKey(true));
-
-        private Action GetOperation(ConsoleKeyInfo keyInfo)
-            => _commands.TryGetValue(keyInfo.Key, out var command) ? command.Execute : NoOp;
+        private ICommand? GetCommand(ConsoleKeyInfo keyInfo)
+            => _commands.TryGetValue(keyInfo.Key, out var command) ? command : null;
     }
 }

@@ -16,7 +16,7 @@ namespace ConsoleDraw.Core
             get => end; set
             {
                 end = value;
-                Size = End - Start;
+                Size = new Point(Math.Abs(End.X - Start.X), Math.Abs(End.Y - Start.Y));
             }
         }
         public Point Size { get; private set; }

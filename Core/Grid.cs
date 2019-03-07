@@ -4,9 +4,10 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public enum DrawMode {
+    public enum DrawMode
+    {
         None, Drawing, Rectangle, Ellipse
-    } 
+    }
 
     public class Grid
     {
@@ -15,6 +16,8 @@ namespace ConsoleDraw.Core
         private Point _current;
         private IShape? _activeShape;
         private DrawMode _mode;
+
+        private readonly Stack<IOperation> _operations = new Stack<IOperation>();
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -50,6 +53,8 @@ namespace ConsoleDraw.Core
             return originalPos;
         }
 
+        public Cell Peek() => this[CurrentPos];
+
         public void Render()
         {
             if (Origin == default)
@@ -62,8 +67,21 @@ namespace ConsoleDraw.Core
         internal void FillShape()
         {
             if (Mode != DrawMode.Rectangle && Mode != DrawMode.Ellipse) return;
-            _activeShape!.Points.ForEach(Paint);
+            _activeShape!.Points.ForEach(pos => Paint(pos));
             this.UpdateMarker();
+        }
+
+        internal void Undo()
+        {
+            if (_operations.Any())
+                _operations.Pop().Undo();
+        }
+
+        public void Perform(IOperation op)
+        {
+            op.Execute();
+            if (op.CanUndo)
+                _operations.Push(op);
         }
 
         public IEnumerable<Cell> Row(int rowIndex)
@@ -148,11 +166,17 @@ namespace ConsoleDraw.Core
             this.UpdateMarker();
         }
 
-        public void Plot()
+        public void Plot(Point? pos = null, ConsoleColor? color = null)
         {
-            this[CurrentPos].Color = SelectedColor;
-            this.Plot(CurrentPos);
+            Paint(pos, color);
             this.UpdateMarker();
+        }
+
+        public void Paint(Point? pos = null, ConsoleColor? color = null)
+        {
+            var cell = this[pos ?? CurrentPos];
+            cell.Color = color ?? SelectedColor;
+            this.Render(cell);
         }
 
         private void UpdateActiveShape()
@@ -162,12 +186,6 @@ namespace ConsoleDraw.Core
             this.Unmark(_activeShape);
             _activeShape!.End = CurrentPos;
             this.Mark(_activeShape);
-        }
-
-        private void Paint(Point pos)
-        {
-            this[pos].Color = SelectedColor;
-            this.Plot(pos);
         }
 
         private static Cell[,] CreateCells(Point size)

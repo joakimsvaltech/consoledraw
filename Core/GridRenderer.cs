@@ -7,7 +7,7 @@ namespace ConsoleDraw.Core
     {
         public static void Render(this Grid grid)
         {
-            grid.Positions.ForEach(pos => grid.Plot(pos));
+            grid.Positions.ForEach(pos => grid.Render(pos));
         }
 
         public static void UpdateMarker(this Grid grid)
@@ -18,14 +18,14 @@ namespace ConsoleDraw.Core
 
         public static void RemoveMarker(this Grid grid)
         {
-            grid.Plot(grid.CurrentPos);
-            grid.Plot(grid.CurrentPos.Right);
+            grid.Render(grid.CurrentPos);
+            grid.Render(grid.CurrentPos.Right);
         }
 
         public static void Fill(this Grid grid, IEnumerable<Cell> area)
         {
             area.ForEach(cell => cell.Color = grid.SelectedColor);
-            area.ForEach(cell => grid.Plot(cell));
+            area.ForEach(cell => grid.Render(cell));
         }
 
         public static void Unmark(this Grid grid, IShape? shape)
@@ -33,7 +33,7 @@ namespace ConsoleDraw.Core
             if (shape == null)
                 return;
             foreach (var pos in shape.Outline)
-                grid.Plot(pos);
+                grid.Render(pos);
         }
 
         public static void Mark(this Grid grid, IShape? shape)
@@ -44,9 +44,9 @@ namespace ConsoleDraw.Core
                 grid.Mark(pos);
         }
 
-        public static void Plot(this Grid grid, Point pos) => grid.Plot(grid[pos]);
+        private static void Render(this Grid grid, Point pos) => grid.Render(grid[pos]);
 
-        private static void Plot(this Grid grid, Cell cell)
+        public static void Render(this Grid grid, Cell cell)
         {
             grid.PositionCursor(cell.Pos);
             grid.PrintGridCell(cell);

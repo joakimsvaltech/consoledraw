@@ -1,5 +1,6 @@
 Undo
 Redo
+Show enable commands
 Save
 Load
 Outline
