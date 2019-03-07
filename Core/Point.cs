@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public readonly struct Point : IEquatable<Point>
     {
@@ -15,11 +16,22 @@ namespace ConsoleDraw.Genesis
         public static Point operator +(Point left, Point right)
             => new Point(left.X + right.X, left.Y + right.Y);
 
-        public static Point operator +(Point left, int offsetY)
+        public static Point operator -(Point left, Point right)
+            => new Point(left.X - right.X, left.Y - right.Y);
+
+        public static Point operator +(Point left, int offsetX)
+            => new Point(left.X + offsetX, left.Y);
+
+        public static Point operator *(Point left, int offsetY)
             => new Point(left.X, left.Y + offsetY);
 
         public static Point operator %(Point left, Point right)
             => new Point(left.X % right.X, left.Y % right.Y);
+
+        public IEnumerable<Point> To(Point end)
+            => Math.Abs(X - end.X) > Math.Abs(Y - end.Y)
+            ? this.HorisontalTo(end, X > end.X ? -1 : 1)
+            : this.VerticalTo(end, Y > end.Y ? -1 : 1);
 
         public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 

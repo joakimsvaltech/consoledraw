@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public static class CommandRenderer
     {
         public static void RenderCommands(this Interactor interactor)
         {
             Renderer.PositionCursor(interactor.Origin);
-            GetCommandRenderers(interactor)
+            interactor.GetCommandRenderers()
                 .Interleave(RenderSeparator)
                 .ForEach(render => render());
         }

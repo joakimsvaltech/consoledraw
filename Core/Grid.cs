@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public class Grid
     {
@@ -10,6 +10,7 @@ namespace ConsoleDraw.Genesis
         private readonly Cell[,] _cells;
         private Point _current;
         private bool isDrawing;
+        private Rectangle? _activeRectangle;
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -51,7 +52,14 @@ namespace ConsoleDraw.Genesis
                 Origin = new Point(Console.CursorLeft, Console.CursorTop);
             else
                 Console.SetCursorPosition(Origin.X, Origin.Y);
-            this.RenderRows();
+            GridRenderer.Render(this);
+        }
+
+        internal void FillRectangle()
+        {
+            if (ActiveRectangle == null) return;
+            ActiveRectangle!.Points.ForEach(Paint);
+            this.UpdateMarker();
         }
 
         public IEnumerable<Cell> Row(int rowIndex)
@@ -66,6 +74,8 @@ namespace ConsoleDraw.Genesis
             {
                 this.RemoveMarker();
                 _current = value;
+                if (IsDrawing) Plot();
+                UpdateActiveRectangle();
                 this.UpdateMarker();
             }
         }
@@ -77,7 +87,20 @@ namespace ConsoleDraw.Genesis
             private set
             {
                 isDrawing = value;
-                Draw();
+                if (IsDrawing) Plot();
+            }
+        }
+
+        internal Rectangle? ActiveRectangle
+        {
+            get => _activeRectangle;
+            set
+            {
+                if (_activeRectangle != null)
+                    this.Unmark(_activeRectangle);
+                _activeRectangle = value;
+                if (_activeRectangle != null)
+                    this.Mark(_activeRectangle);
             }
         }
 
@@ -89,25 +112,21 @@ namespace ConsoleDraw.Genesis
         public void Up()
         {
             CurrentPos = (CurrentPos.Up + Size) % Size;
-            Draw();
         }
 
         public void Down()
         {
             CurrentPos = CurrentPos.Down % Size;
-            Draw();
         }
 
         public void Left()
         {
             CurrentPos = (CurrentPos.Left + Size) % Size;
-            Draw();
         }
 
         public void Right()
         {
             CurrentPos = CurrentPos.Right % Size;
-            Draw();
         }
 
         public void Fill()
@@ -119,13 +138,24 @@ namespace ConsoleDraw.Genesis
 
         public void Plot()
         {
-            this.Plot(SelectedColor);
+            this[CurrentPos].Color = SelectedColor;
+            this.Plot(CurrentPos);
             this.UpdateMarker();
         }
 
-        private void Draw()
+        private void UpdateActiveRectangle()
         {
-            if (IsDrawing) Plot();
+            if (ActiveRectangle == null)
+                return;
+            this.Unmark(ActiveRectangle);
+            ActiveRectangle.End = CurrentPos;
+            this.Mark(ActiveRectangle);
+        }
+
+        private void Paint(Point pos)
+        {
+            this[pos].Color = SelectedColor;
+            this.Plot(pos);
         }
 
         private static Cell[,] CreateCells(Point size)
@@ -147,7 +177,7 @@ namespace ConsoleDraw.Genesis
             => new Cell
             {
                 Pos = pos,
-                ColorIndex = rand.Next(colors) + 1
+                Color = (ConsoleColor)(rand.Next(colors) + 1)
             };
     }
 }

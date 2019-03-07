@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public class Cell
     {
         public Point Pos { get; set; }
-        public int ColorIndex { get; set; }
+        public ConsoleColor Color { get; set; }
         public char Tag { get; set; } = ' ';
 
         public IEnumerable<Cell> Neighbours(Grid grid)
@@ -27,11 +28,11 @@ namespace ConsoleDraw.Genesis
         public Cell Clone(char tag)
             => new Cell
             {
-                ColorIndex = ColorIndex,
+                Color = Color,
                 Tag = tag,
                 Pos = Pos
             };
 
-        public override string ToString() => $"{Pos}:{Tag}{ColorIndex}";
+        public override string ToString() => $"{Pos}:{Tag}{(int)Color}";
     }
 }

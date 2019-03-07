@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public static class GridAlgorithms
     {
@@ -13,17 +14,25 @@ namespace ConsoleDraw.Genesis
         public static IEnumerable<Cell> GetArea(this Grid grid, Point center)
         {
             var next = grid[center];
-            var color = next.ColorIndex;
+            var color = next.Color;
             var area = new HashSet<Cell> { next };
-            var neighbours = new Stack<Cell>(next.Neighbours(grid).Where(n => n.ColorIndex == color));
+            var neighbours = new Stack<Cell>(next.Neighbours(grid).Where(n => n.Color == color));
             while (neighbours.Any())
             {
                 next = neighbours.Pop();
                 area.Add(next);
-                next.Neighbours(grid).Where(n => n.ColorIndex == color).Except(area).ForEach(n => neighbours.Push(n));
+                next.Neighbours(grid).Where(n => n.Color == color).Except(area).ForEach(n => neighbours.Push(n));
             }
             return area;
         }
+
+        public static IEnumerable<Point> HorisontalTo(this Point start, Point end, int sign)
+            => Enumerable.Range(0, Math.Abs(end.X - start.X) + 1)
+            .Select(i => new Point(start.X + sign * i, start.Y));
+
+        public static IEnumerable<Point> VerticalTo(this Point start, Point end, int sign)
+            => Enumerable.Range(0, Math.Abs(end.Y - start.Y) + 1)
+            .Select(i => new Point(start.X, start.Y + sign * i));
 
         private static Cell[][] FindConnectedAreas(Grid grid)
         {
@@ -62,7 +71,7 @@ namespace ConsoleDraw.Genesis
 
         private static Cell[] FindSameColoredNeighbours(this Grid grid, Cell cell)
             => cell.NorthWestNeighbours(grid)
-            .Where(n => n.ColorIndex == cell.ColorIndex).ToArray();
+            .Where(n => n.Color == cell.Color).ToArray();
 
         private static void Replace(this int[,] grid, int replace, int with)
         {

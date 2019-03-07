@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public class Interactor
     {
@@ -14,7 +14,7 @@ namespace ConsoleDraw.Genesis
 
         public Interactor(Grid grid) => (_grid, _commands) = (grid, GetCommands(grid));
 
-        public Point Origin => _grid.Origin + _grid.Size.Y + 1;
+        public Point Origin => _grid.Origin * (_grid.Size.Y + 1);
 
         public bool Interact()
         {
@@ -25,7 +25,7 @@ namespace ConsoleDraw.Genesis
             return true;
         }
 
-        public IEnumerable<Command> Commands => _commands.Values;
+        internal IEnumerable<Command> Commands => _commands.Values;
 
         private IDictionary<ConsoleKey, Command> GetCommands(Grid grid)
             => GetArrowCommands(grid)
@@ -44,12 +44,33 @@ namespace ConsoleDraw.Genesis
         private Command[] GetActionCommands(Grid grid)
             => new Command[] {
             new Command("_Plot", grid.Plot),
-            new Command("_Draw", () => Draw(), () => grid.IsDrawing),
+            new Command("_Draw", () => Draw(), () => _grid.IsDrawing),
+            new Command("_Rectangle", () => Rectangle(), () => _grid.ActiveRectangle != null),
             new Command("_Fill", grid.Fill),
             new Command("E_xit", Exit),
         };
 
-        private void Draw() {
+        private void Rectangle()
+        {
+            if (_grid.ActiveRectangle == null)
+                CreateRectangle();
+            else
+                FillRectangle();
+        }
+
+        private void CreateRectangle()
+        {
+            _grid.ActiveRectangle = new Rectangle(_grid.CurrentPos, _grid.CurrentPos);
+        }
+
+        private void FillRectangle()
+        {
+            _grid.FillRectangle();
+            _grid.ActiveRectangle = null;
+        }
+
+        private void Draw()
+        {
             _grid.ToggleIsDrawing();
             this.RenderCommands();
         }

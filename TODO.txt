@@ -1,0 +1,16 @@
+Fix black spot
+Escape Rectangle mode
+Mark R
+Only color colorname in command
+Filled circle
+Undo
+Redo
+Save
+Load
+Outline
+Loop through and mark areas in order of size
+Project structure
+Tests
+
+Done
+Filled rectangle

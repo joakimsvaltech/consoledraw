@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public static class Renderer
     {

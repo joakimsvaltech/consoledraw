@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
     public static class EnumerableExtensions
     {
@@ -27,5 +27,15 @@ namespace ConsoleDraw.Genesis
                 yield return item;
             }
         }
+
+        public static IEnumerable<T> Even<T>(this IEnumerable<T> items)
+            => items.Select((item, i) => (item, i)).Where(t => t.i % 2 == 0).Select(t => t.item);
+
+        public static IEnumerable<T> Odd<T>(this IEnumerable<T> items)
+            => items.Select((item, i) => (item, i)).Where(t => t.i % 2 == 1).Select(t => t.item);
+
+        public static IEnumerable<TRes> Combine<TItem, TRes>(this IEnumerable<TItem> items, IEnumerable<TItem> otherItems, Func<TItem, TItem, TRes> merge)
+            => items.Select((item, i) => (item, i))
+            .Join(otherItems.Select((item, i) => (item, i)), outer => outer.i, inner => inner.i, (o, i) => merge(o.item, i.item));
     }
 }

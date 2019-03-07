@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace ConsoleDraw.Genesis
+namespace ConsoleDraw.Core
 {
-    public class Command
+    internal class Command
     {
-        public Command(string label, Action execute, Func<bool>? isActive = null)
+        internal Command(string label, Action execute, Func<bool>? isActive = null)
             : this(GetKey(label), execute, GetTag(label), () => RenderLabel(label), isActive) { }
 
         public Command(ConsoleKey key, Action execute, string? tag = null, Action? render = null, Func<bool>? isActive = null)
