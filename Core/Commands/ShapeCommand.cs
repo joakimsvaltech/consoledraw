@@ -18,34 +18,5 @@ namespace ConsoleDraw.Core
             : base.TagForeground;
 
         public GridMode ShapeMode { get; }
-        public override IOperation CreateOperation(Grid grid) => new ShapeOperation(this, grid);
-    }
-
-    public class ShapeOperation : ApplyableOperation
-    {
-        private Cell[] _oldCells = new Cell[0];
-        private readonly ShapeCommand _command;
-
-        public ShapeOperation(ShapeCommand command, Grid grid) : base(grid) => _command = command;
-
-        protected override void DoExecute()
-        {
-            Grid.Mode = _command.ShapeMode;
-        }
-
-        public override void Apply()
-        {
-            var shadow = Grid.ActiveShadow;
-            if (shadow == null)
-                return;
-            _oldCells = shadow;
-            Grid.FillShape();
-            Grid.Mode = GridMode.None;
-        }
-
-        protected override void DoUndo()
-        {
-            _oldCells.ForEach(Grid.Plot);
-        }
     }
 }

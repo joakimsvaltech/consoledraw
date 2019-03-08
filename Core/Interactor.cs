@@ -54,24 +54,8 @@ namespace ConsoleDraw.Core
             new ExitCommand(),
         };
 
-        private void ToggleEllipse()
-        {
-            if (IsEllipse)
-                FillShape();
-            else
-                _grid.Mode = GridMode.Ellipse;
-        }
-
-        private bool IsEllipse => _grid.Mode == GridMode.Ellipse;
-
         private void Escape()
         {
-            _grid.Mode = GridMode.None;
-        }
-
-        private void FillShape()
-        {
-            _grid.FillShape();
             _grid.Mode = GridMode.None;
         }
 

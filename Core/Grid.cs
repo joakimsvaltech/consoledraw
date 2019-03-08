@@ -12,11 +12,11 @@ namespace ConsoleDraw.Core
     public class Grid
     {
         public event EventHandler<OperationEventArgs> CommandExecuting;
+        public event EventHandler<OperationEventArgs> CommandExecuted;
 
         private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
-        private IShape? _activeShape;
 
         private GridMode _mode;
 
@@ -38,6 +38,14 @@ namespace ConsoleDraw.Core
             get => _cells[pos.X, pos.Y];
             set => _cells[pos.X, pos.Y] = value;
         }
+
+        internal void FillShape(IShape shape)
+        {
+            shape.Points.ForEach(pos => Paint(pos));
+            this.UpdateMarker();
+        }
+
+        internal Cell[] GetShadow(IShape shape) => shape.Points.Select(p => this[p]).Select(c => c.Clone()).ToArray();
 
         public void RandomFill()
         {
@@ -66,15 +74,6 @@ namespace ConsoleDraw.Core
                 Console.SetCursorPosition(Origin.X, Origin.Y);
             GridRenderer.Render(this);
         }
-
-        internal void FillShape()
-        {
-            if (Mode != GridMode.Rectangle && Mode != GridMode.Ellipse) return;
-            _activeShape!.Points.ForEach(pos => Paint(pos));
-            this.UpdateMarker();
-        }
-
-        internal Cell[]? ActiveShadow => _activeShape?.Points.Select(p => this[p]).Select(c => c.Clone()).ToArray();
 
         public void Execute(ICommand command)
         {
@@ -107,7 +106,6 @@ namespace ConsoleDraw.Core
                 _current = value;
                 if (Mode == GridMode.Drawing)
                     Plot();
-                UpdateActiveShape();
                 this.UpdateMarker();
             }
         }
@@ -125,19 +123,9 @@ namespace ConsoleDraw.Core
             {
                 if (value == _mode)
                     return;
-                if (_mode == GridMode.Rectangle || _mode == GridMode.Ellipse)
-                {
-                    this.Unmark(_activeShape);
-                    _activeShape = null;
-                }
                 _mode = value;
                 if (_mode == GridMode.Drawing)
                     Plot();
-                if (_mode == GridMode.Rectangle || _mode == GridMode.Ellipse)
-                {
-                    _activeShape = CreateShape();
-                    this.Mark(_activeShape);
-                }
             }
         }
 
@@ -174,31 +162,11 @@ namespace ConsoleDraw.Core
 
         private void Perform(IOperation operation)
         {
-            OnCommandExecuting(new OperationEventArgs(operation));
+            CommandExecuting?.Invoke(this, new OperationEventArgs(operation));
             operation.Execute();
             if (operation.CanUndo)
                 _operations.Push(operation);
-        }
-
-        private void OnCommandExecuting(OperationEventArgs eventArgs)
-        {
-            CommandExecuting?.Invoke(this, eventArgs);
-        }
-
-        private IShape CreateShape() => Mode switch
-        {
-            GridMode.Rectangle => (IShape)new Rectangle(CurrentPos),
-            GridMode.Ellipse => new Ellipse(CurrentPos),
-            _ => throw new NotImplementedException($"{Mode} is not a shape")
-        };
-
-        private void UpdateActiveShape()
-        {
-            if (Mode != GridMode.Rectangle && Mode != GridMode.Ellipse)
-                return;
-            this.Unmark(_activeShape);
-            _activeShape!.End = CurrentPos;
-            this.Mark(_activeShape);
+            CommandExecuted?.Invoke(this, new OperationEventArgs(operation));
         }
 
         private static Cell[,] CreateCells(Point size)
