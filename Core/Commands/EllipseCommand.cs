@@ -1,4 +1,6 @@
-﻿namespace ConsoleDraw.Core
+﻿using ConsoleDraw.Core.Shapes;
+
+namespace ConsoleDraw.Core
 {
     public class EllipseCommand : ShapeCommand
     {

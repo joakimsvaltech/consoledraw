@@ -1,4 +1,6 @@
-﻿namespace ConsoleDraw.Core
+﻿using ConsoleDraw.Core.Shapes;
+
+namespace ConsoleDraw.Core
 {
     public abstract class ShapeOperation : ApplyableOperation
     {
@@ -63,7 +65,7 @@
         private void UpdateShape()
         {
             Grid.Unmark(_activeShape);
-            _activeShape!.End = Grid.CurrentPos;
+            _activeShape!.Update(Grid.CurrentPos);
             Grid.Mark(_activeShape);
         }
     }

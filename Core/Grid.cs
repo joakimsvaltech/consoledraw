@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Shapes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,11 +42,11 @@ namespace ConsoleDraw.Core
 
         internal void FillShape(IShape shape)
         {
-            shape.Points.ForEach(pos => Paint(pos));
+            shape.Area.ForEach(pos => Paint(pos));
             this.UpdateMarker();
         }
 
-        internal Cell[] GetShadow(IShape shape) => shape.Points.Select(p => this[p]).Select(c => c.Clone()).ToArray();
+        internal Cell[] GetShadow(IShape shape) => shape.Area.Select(p => this[p]).Select(c => c.Clone()).ToArray();
 
         public void RandomFill()
         {
@@ -102,17 +103,12 @@ namespace ConsoleDraw.Core
             get => _current;
             set
             {
+                if (_current == value)
+                    return;
                 this.RemoveMarker();
                 _current = value;
-                if (Mode == GridMode.Drawing)
-                    Plot();
                 this.UpdateMarker();
             }
-        }
-
-        public void ToggleDraw()
-        {
-            Mode = Mode == GridMode.Drawing ? GridMode.None : GridMode.Drawing;
         }
 
         public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;

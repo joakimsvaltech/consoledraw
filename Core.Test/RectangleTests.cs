@@ -1,4 +1,5 @@
 ﻿using ConsoleDraw.Core;
+using ConsoleDraw.Core.Shapes;
 using Xunit;
 
 namespace Core.Test
@@ -31,7 +32,7 @@ namespace Core.Test
             var start = new Point(startX, startY);
             var end = new Point(endX, endY);
             var rect = new Rectangle(start, end);
-            var actual = rect.Points;
+            var actual = rect.Area;
             var expected = TestUtils.GetPoints(expectedCoords);
             Assert.Equal(actual, expected);
         }

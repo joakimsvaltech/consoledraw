@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Shapes;
+using System;
 using System.Collections.Generic;
 
 namespace ConsoleDraw.Core

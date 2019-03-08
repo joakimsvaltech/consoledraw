@@ -2,37 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Core
+namespace ConsoleDraw.Core.Shapes
 {
     public class Ellipse : IShape
     {
-        private Point end;
+        private Point _end;
+        private readonly Point _start;
+        private Point _size;
 
-        public Ellipse(Point start, Point? end = null) => (Start, End) = (start, end ?? start);
+        public Ellipse(Point start, Point? end = null) => (_start, End) = (start, end ?? start);
 
-        public Point Start { get; }
         public Point End
         {
-            get => end; set
+            set
             {
-                end = value;
-                Size = new Point(Math.Abs(End.X - Start.X), Math.Abs(End.Y - Start.Y));
+                _end = value;
+                _size = new Point(Math.Abs(_end.X - _start.X), Math.Abs(_end.Y - _start.Y));
             }
         }
-        public Point Size { get; private set; }
 
-        public Point[] Points => ComputePoints().Distinct().ToArray();
+        public void Update(Point point) => End = point;
+
+        public Point[] Area => ComputePoints().Distinct().ToArray();
 
         public Point[] Outline => ComputeOutline().Distinct().ToArray();
 
         private IEnumerable<Point> ComputePoints()
         {
-            var height = Size.Y + 1;
-            var width = Size.X + 1;
-            var startX = Math.Min(Start.X, End.X);
-            var startY = Math.Min(Start.Y, End.Y);
-            var endX = Math.Max(Start.X, End.X);
-            var endY = Math.Max(Start.Y, End.Y);
+            var height = _size.Y + 1;
+            var width = _size.X + 1;
+            var startX = Math.Min(_start.X, _end.X);
+            var startY = Math.Min(_start.Y, _end.Y);
+            var endX = Math.Max(_start.X, _end.X);
+            var endY = Math.Max(_start.Y, _end.Y);
             if (height % 2 == 1)
             {
                 var midY = startY + height / 2;
@@ -48,7 +50,8 @@ namespace ConsoleDraw.Core
             for (var y = 0; y < height / 2; y++)
             {
                 var offset = ComputeOffset(y, width, height);
-                for (var x = offset; x < width / 2; x++) {
+                for (var x = offset; x < width / 2; x++)
+                {
                     yield return new Point(startX + x, startY + y);
                     yield return new Point(endX - x, startY + y);
                     yield return new Point(startX + x, endY - y);
@@ -59,12 +62,12 @@ namespace ConsoleDraw.Core
 
         private IEnumerable<Point> ComputeOutline()
         {
-            var height = Size.Y + 1;
-            var width = Size.X + 1;
-            var startX = Math.Min(Start.X, End.X);
-            var startY = Math.Min(Start.Y, End.Y);
-            var endX = Math.Max(Start.X, End.X);
-            var endY = Math.Max(Start.Y, End.Y);
+            var height = _size.Y + 1;
+            var width = _size.X + 1;
+            var startX = Math.Min(_start.X, _end.X);
+            var startY = Math.Min(_start.Y, _end.Y);
+            var endX = Math.Max(_start.X, _end.X);
+            var endY = Math.Max(_start.Y, _end.Y);
             var prevOffset = width / 2;
             for (var y = 0; y <= height / 2; y++)
             {
