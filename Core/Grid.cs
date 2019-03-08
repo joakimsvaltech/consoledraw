@@ -7,7 +7,7 @@ namespace ConsoleDraw.Core
 {
     public enum GridMode
     {
-        None, Drawing, Rectangle, Ellipse
+        None, Drawing, Rectangle, Ellipse, Line
     }
 
     public class Grid

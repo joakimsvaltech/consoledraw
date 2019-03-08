@@ -47,17 +47,13 @@ namespace ConsoleDraw.Core
             new DrawCommand(grid),
             new RectangleCommand(grid),
             new EllipseCommand(grid),
+            new LineCommand(grid),
             new FillCommand(),
             new ApplyCommand(),
-            new ActionCommand(ConsoleKey.Escape, Escape, "Esc", "Escape"),
+            new EscapeCommand(),
             new UndoCommand(),
             new ExitCommand(),
         };
-
-        private void Escape()
-        {
-            _grid.Mode = GridMode.None;
-        }
 
         private IEnumerable<ColorCommand> GetColorCommands(Grid grid)
             => grid.Colors.Select(color => CreateColorCommand(grid, color));

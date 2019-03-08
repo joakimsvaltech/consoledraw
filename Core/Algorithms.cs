@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public static class GridAlgorithms
+    public static class Algorithms
     {
         public static IEnumerable<Cell> FindLargestConnectedArea(this Grid grid)
             => FindConnectedAreas(grid)
@@ -26,13 +26,29 @@ namespace ConsoleDraw.Core
             return area;
         }
 
-        public static IEnumerable<Point> HorisontalTo(this Point start, Point end, int sign)
-            => Enumerable.Range(0, Math.Abs(end.X - start.X) + 1)
-            .Select(i => new Point(start.X + sign * i, start.Y));
+        public static IEnumerable<Point> To(this Point from, Point to)
+            => from == to 
+            ? new [] { from}
+            : IsSteep(from, to)
+            ? SteepTo(from, to, from.X > to.X ? -1 : 1)
+            : FlatTo(from, to, from.Y > to.Y ? -1 : 1);
 
-        public static IEnumerable<Point> VerticalTo(this Point start, Point end, int sign)
-            => Enumerable.Range(0, Math.Abs(end.Y - start.Y) + 1)
-            .Select(i => new Point(start.X, start.Y + sign * i));
+        private static bool IsSteep(Point from, Point to)
+            => Math.Abs(from.X - to.X) < Math.Abs(from.Y - to.Y);
+
+        private static IEnumerable<Point> FlatTo(Point from, Point to, int sign)
+        {
+            var k = (to.Y - from.Y) / (double)Math.Abs(to.X - from.X);
+            return Enumerable.Range(0, Math.Abs(to.X - from.X) + 1)
+                       .Select(i => new Point(from.X + sign * i, (int)(from.Y + i * k)));
+        }
+
+        private static IEnumerable<Point> SteepTo(Point from, Point to, int sign)
+        {
+            var k = (to.X - from.X) / (double)Math.Abs(to.Y - from.Y);
+            return Enumerable.Range(0, Math.Abs(to.Y - from.Y) + 1)
+            .Select(i => new Point((int)(from.X + i * k), from.Y + sign * i));
+        }
 
         private static Cell[][] FindConnectedAreas(Grid grid)
         {

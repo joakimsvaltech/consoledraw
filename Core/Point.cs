@@ -28,13 +28,6 @@ namespace ConsoleDraw.Core
         public static Point operator %(Point left, Point right)
             => new Point(left.X % right.X, left.Y % right.Y);
 
-        public IEnumerable<Point> To(Point end)
-            => Math.Abs(X - end.X) > Math.Abs(Y - end.Y)
-            ? this.HorisontalTo(end, X > end.X ? -1 : 1)
-            : this.VerticalTo(end, Y > end.Y ? -1 : 1);
-
-        public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
-
         public int X { get; }
         public int Y { get; }
 
