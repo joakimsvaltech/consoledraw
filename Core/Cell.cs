@@ -25,11 +25,11 @@ namespace ConsoleDraw.Core
             if (Pos.Y < grid.Size.Y - 1) yield return grid[Pos.Down];
         }
 
-        public Cell Clone(char tag)
+        public Cell Clone(char? tag = null)
             => new Cell
             {
                 Color = Color,
-                Tag = tag,
+                Tag = tag ?? Tag,
                 Pos = Pos
             };
 

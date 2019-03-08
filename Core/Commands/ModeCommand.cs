@@ -19,22 +19,13 @@ namespace ConsoleDraw.Core
             : base.TagForeground;
 
 
-        public override IOperation CreateOperation() => new ModeOperation(_executer);
+        public override IOperation CreateOperation(Grid grid) => new ModeOperation(grid, _executer);
 
-        private class ModeOperation : IOperation
+        private class ModeOperation : Operation
         {
             private readonly Action _executer;
-
-            public ModeOperation(Action executer) => _executer = executer;
-
-            public bool CanUndo => false;
-
-            public void Execute() => _executer();
-
-            public void Undo()
-            {
-                throw new NotImplementedException();
-            }
+            public ModeOperation(Grid grid, Action executer) : base(grid) => _executer = executer;
+            public override void Execute() => _executer();
         }
     }
 }

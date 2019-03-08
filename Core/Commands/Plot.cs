@@ -4,31 +4,27 @@ namespace ConsoleDraw.Core
 {
     public class Plot : CommandBase
     {
-        private readonly Grid _grid;
-        internal Plot(Grid grid) : base("_Plot") => _grid = grid;
-        public override IOperation CreateOperation() => new PlotOperation(_grid);
+        internal Plot() : base("_Plot") { }
+        public override IOperation CreateOperation(Grid grid) => new PlotOperation(grid);
 
-        private class PlotOperation : IOperation
+        private class PlotOperation : UndoableOperation
         {
-            private readonly Grid _grid;
             private Point _oldPos;
             private ConsoleColor _oldColor;
 
-            public PlotOperation(Grid grid) => _grid = grid;
+            public PlotOperation(Grid grid) : base(grid) { }
 
-            public bool CanUndo => true;
-
-            public void Execute()
+            protected override void DoExecute()
             {
-                var cell = _grid.Peek();
+                var cell = Grid.Peek();
                 _oldPos = cell.Pos;
                 _oldColor = cell.Color;
-                _grid.Plot();
+                Grid.Plot();
             }
 
-            public void Undo()
+            protected override void DoUndo()
             {
-                _grid.Plot(_oldPos, _oldColor);
+                Grid.Plot(_oldPos, _oldColor);
             }
         }
     }

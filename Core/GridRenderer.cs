@@ -30,7 +30,7 @@ namespace ConsoleDraw.Core
 
         public static void Unmark(this Grid grid, IShape? shape)
         {
-            if (shape == null)
+            if (shape is null)
                 return;
             foreach (var pos in shape.Outline)
                 grid.Render(pos);
@@ -38,7 +38,7 @@ namespace ConsoleDraw.Core
 
         public static void Mark(this Grid grid, IShape? shape)
         {
-            if (shape == null)
+            if (shape is null)
                 return;
             foreach (var pos in shape.Outline)
                 grid.Mark(pos);

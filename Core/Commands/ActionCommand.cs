@@ -13,23 +13,16 @@ namespace ConsoleDraw.Core
 
         private readonly Action _executer;
 
-        public override IOperation CreateOperation()
-            => new ActionOperation(_executer);
+        public override IOperation CreateOperation(Grid grid)
+            => new ActionOperation(grid, _executer);
 
-        private class ActionOperation : IOperation
+        private class ActionOperation : Operation
         {
             private readonly Action _executer;
 
-            public ActionOperation(Action executer) => _executer = executer;
+            public ActionOperation(Grid grid, Action executer) : base(grid) => _executer = executer;
 
-            public bool CanUndo => false;
-
-            public void Execute() => _executer();
-
-            public void Undo()
-            {
-                throw new NotImplementedException();
-            }
+            public override void Execute() => _executer();
         }
     }
 }

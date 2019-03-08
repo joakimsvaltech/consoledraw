@@ -38,6 +38,6 @@ namespace ConsoleDraw.Core
         protected static ConsoleKey GetKey(string label) => Enum.Parse<ConsoleKey>(GetTag(label));
         protected static string GetTag(string label) => $"{char.ToUpper(label[label.IndexOf('_') + 1])}";
 
-        public virtual IOperation CreateOperation() => throw new NotImplementedException();
+        public virtual IOperation CreateOperation(Grid grid) => throw new NotImplementedException();
     }
 }

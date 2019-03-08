@@ -20,7 +20,7 @@ namespace ConsoleDraw.Core
                 return true;
             if (command is ExitCommand)
                 return false;
-            _grid.Perform(command.CreateOperation());
+            _grid.Execute(command);
             this.RenderCommands();
             return true;
         }
@@ -35,36 +35,31 @@ namespace ConsoleDraw.Core
 
         private ICommand[] GetArrowCommands(Grid grid)
             => new[] {
-            new NavigationCommand(ConsoleKey.UpArrow, grid.Up),
-            new NavigationCommand(ConsoleKey.DownArrow, grid.Down),
-            new NavigationCommand(ConsoleKey.LeftArrow, grid.Left),
-            new NavigationCommand(ConsoleKey.RightArrow, grid.Right)
+            new NavigationCommand(ConsoleKey.UpArrow, Direction.Up),
+            new NavigationCommand(ConsoleKey.DownArrow, Direction.Down),
+            new NavigationCommand(ConsoleKey.LeftArrow, Direction.Left),
+            new NavigationCommand(ConsoleKey.RightArrow, Direction.Right)
         };
 
         private ICommand[] GetActionCommands(Grid grid)
             => new ICommand[] {
-            new Plot(grid),
-            new ModeCommand("_Draw", ToggleDraw, () => _grid.Mode == DrawMode.Drawing),
+            new Plot(),
+            new DrawCommand(grid),
             new ModeCommand("_Rectangle", ToggleRectangle, () => IsRectangle),
             new ModeCommand("_Ellipse", ToggleEllipse, () => IsEllipse),
             new ActionCommand("_Fill", grid.Fill),
             new ActionCommand(ConsoleKey.Enter, Enter, "Enter", "Fill shape"),
             new ActionCommand(ConsoleKey.Escape, Escape, "Esc", "Escape"),
-            new UndoCommand(Undo),
+            new UndoCommand(),
             new ExitCommand(),
         };
-
-        private void Undo()
-        {
-            _grid.Undo();
-        }
 
         private void ToggleRectangle()
         {
             if (IsRectangle)
                 FillShape();
             else
-                _grid.Mode = DrawMode.Rectangle;
+                _grid.Mode = GridMode.Rectangle;
             this.RenderCommands();
         }
 
@@ -73,12 +68,12 @@ namespace ConsoleDraw.Core
             if (IsEllipse)
                 FillShape();
             else
-                _grid.Mode = DrawMode.Ellipse;
+                _grid.Mode = GridMode.Ellipse;
             this.RenderCommands();
         }
 
-        private bool IsRectangle => _grid.Mode == DrawMode.Rectangle;
-        private bool IsEllipse => _grid.Mode == DrawMode.Ellipse;
+        private bool IsRectangle => _grid.Mode == GridMode.Rectangle;
+        private bool IsEllipse => _grid.Mode == GridMode.Ellipse;
 
         private void Enter()
         {
@@ -87,18 +82,13 @@ namespace ConsoleDraw.Core
 
         private void Escape()
         {
-            _grid.Mode = DrawMode.None;
+            _grid.Mode = GridMode.None;
         }
 
         private void FillShape()
         {
             _grid.FillShape();
-            _grid.Mode = DrawMode.None;
-        }
-
-        private void ToggleDraw()
-        {
-            _grid.ToggleDraw();
+            _grid.Mode = GridMode.None;
         }
 
         private IEnumerable<ColorCommand> GetColorCommands(Grid grid)

@@ -1,30 +1,15 @@
-﻿using System;
-
-namespace ConsoleDraw.Core
+﻿namespace ConsoleDraw.Core
 {
     public class UndoCommand : CommandBase
     {
-        internal UndoCommand(Action execute)
-            : base("_Undo") => _execute = execute;
+        internal UndoCommand() : base("_Undo") {}
 
-        private readonly Action _execute;
+        public override IOperation CreateOperation(Grid grid) => new UndoOperation(grid);
 
-        public override IOperation CreateOperation() => new UndoOperation(_execute);
-
-        private class UndoOperation : IOperation
+        private class UndoOperation : Operation
         {
-            private readonly Action _execute;
-
-            public UndoOperation(Action execute) => _execute = execute;
-
-            public bool CanUndo => false;
-
-            public void Execute() => _execute();
-
-            public void Undo()
-            {
-                throw new NotImplementedException();
-            }
+            public UndoOperation(Grid grid) : base(grid) { }
+            public override void Execute() => Grid.Undo();
         }
     }
 }

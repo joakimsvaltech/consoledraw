@@ -4,18 +4,20 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public enum DrawMode
+    public enum GridMode
     {
         None, Drawing, Rectangle, Ellipse
     }
 
     public class Grid
     {
+        public event EventHandler<OperationEventArgs> CommandExecuting;
+
         private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
         private IShape? _activeShape;
-        private DrawMode _mode;
+        private GridMode _mode;
 
         private readonly Stack<IOperation> _operations = new Stack<IOperation>();
 
@@ -66,22 +68,29 @@ namespace ConsoleDraw.Core
 
         internal void FillShape()
         {
-            if (Mode != DrawMode.Rectangle && Mode != DrawMode.Ellipse) return;
+            if (Mode != GridMode.Rectangle && Mode != GridMode.Ellipse) return;
             _activeShape!.Points.ForEach(pos => Paint(pos));
             this.UpdateMarker();
+        }
+
+        public void Execute(ICommand command)
+        {
+            var op = command.CreateOperation(this);
+            OnCommandExecuting(new OperationEventArgs(op));
+            op.Execute();
+            if (op.CanUndo)
+                _operations.Push(op);
+        }
+
+        private void OnCommandExecuting(OperationEventArgs eventArgs)
+        {
+            CommandExecuting?.Invoke(this, eventArgs);
         }
 
         internal void Undo()
         {
             if (_operations.Any())
                 _operations.Pop().Undo();
-        }
-
-        public void Perform(IOperation op)
-        {
-            op.Execute();
-            if (op.CanUndo)
-                _operations.Push(op);
         }
 
         public IEnumerable<Cell> Row(int rowIndex)
@@ -92,11 +101,11 @@ namespace ConsoleDraw.Core
         public Point CurrentPos
         {
             get => _current;
-            private set
+            set
             {
                 this.RemoveMarker();
                 _current = value;
-                if (Mode == DrawMode.Drawing)
+                if (Mode == GridMode.Drawing)
                     Plot();
                 UpdateActiveShape();
                 this.UpdateMarker();
@@ -105,26 +114,26 @@ namespace ConsoleDraw.Core
 
         public void ToggleDraw()
         {
-            Mode = Mode == DrawMode.Drawing ? DrawMode.None : DrawMode.Drawing;
+            Mode = Mode == GridMode.Drawing ? GridMode.None : GridMode.Drawing;
         }
 
         public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;
-        public DrawMode Mode
+        public GridMode Mode
         {
             get => _mode;
             set
             {
                 if (value == _mode)
                     return;
-                if (_mode == DrawMode.Rectangle || _mode == DrawMode.Ellipse)
+                if (_mode == GridMode.Rectangle || _mode == GridMode.Ellipse)
                 {
                     this.Unmark(_activeShape);
                     _activeShape = null;
                 }
                 _mode = value;
-                if (_mode == DrawMode.Drawing)
+                if (_mode == GridMode.Drawing)
                     Plot();
-                if (_mode == DrawMode.Rectangle || _mode == DrawMode.Ellipse)
+                if (_mode == GridMode.Rectangle || _mode == GridMode.Ellipse)
                 {
                     _activeShape = CreateShape();
                     this.Mark(_activeShape);
@@ -132,31 +141,20 @@ namespace ConsoleDraw.Core
             }
         }
 
+        public bool IsDrawing => Mode == GridMode.Drawing;
+
         private IShape CreateShape() => Mode switch
         {
-            DrawMode.Rectangle => (IShape)new Rectangle(CurrentPos),
-            DrawMode.Ellipse => new Ellipse(CurrentPos),
+            GridMode.Rectangle => (IShape)new Rectangle(CurrentPos),
+            GridMode.Ellipse => new Ellipse(CurrentPos),
             _ => throw new NotImplementedException($"{Mode} is not a shape")
         };
 
-        public void Up()
-        {
-            CurrentPos = (CurrentPos.Up + Size) % Size;
-        }
+        public Point NextPosition(Direction dir) => (Size + CurrentPos.Neighbour(dir)) % Size;
 
-        public void Down()
+        public void Step(Direction dir)
         {
-            CurrentPos = CurrentPos.Down % Size;
-        }
-
-        public void Left()
-        {
-            CurrentPos = (CurrentPos.Left + Size) % Size;
-        }
-
-        public void Right()
-        {
-            CurrentPos = CurrentPos.Right % Size;
+            CurrentPos = NextPosition(dir);
         }
 
         public void Fill()
@@ -181,7 +179,7 @@ namespace ConsoleDraw.Core
 
         private void UpdateActiveShape()
         {
-            if (Mode != DrawMode.Rectangle && Mode != DrawMode.Ellipse)
+            if (Mode != GridMode.Rectangle && Mode != GridMode.Ellipse)
                 return;
             this.Unmark(_activeShape);
             _activeShape!.End = CurrentPos;

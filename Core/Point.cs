@@ -56,5 +56,14 @@ namespace ConsoleDraw.Core
             => X + Y;
 
         public override string ToString() => $"({X},{Y})";
+
+        internal Point Neighbour(Direction direction) => direction switch
+        {
+            Direction.Up => Up,
+            Direction.Down => Down,
+            Direction.Left => Left,
+            Direction.Right => Right,
+            _ => throw new NotImplementedException()
+        };
     }
 }
