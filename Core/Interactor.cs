@@ -28,12 +28,12 @@ namespace ConsoleDraw.Core
         internal IEnumerable<ICommand> Commands => _commands.Values;
 
         private IDictionary<ConsoleKey, ICommand> GetCommands(Grid grid)
-            => GetArrowCommands(grid)
+            => GetArrowCommands()
             .Concat(GetActionCommands(grid))
             .Concat(GetColorCommands(grid))
             .ToDictionary(c => c.Key, c => c);
 
-        private ICommand[] GetArrowCommands(Grid grid)
+        private ICommand[] GetArrowCommands()
             => new[] {
             new NavigationCommand(ConsoleKey.UpArrow, Direction.Up),
             new NavigationCommand(ConsoleKey.DownArrow, Direction.Down),
@@ -45,23 +45,14 @@ namespace ConsoleDraw.Core
             => new ICommand[] {
             new Plot(),
             new DrawCommand(grid),
-            new ModeCommand("_Rectangle", ToggleRectangle, () => IsRectangle),
-            new ModeCommand("_Ellipse", ToggleEllipse, () => IsEllipse),
-            new ActionCommand("_Fill", grid.Fill),
-            new ActionCommand(ConsoleKey.Enter, Enter, "Enter", "Fill shape"),
+            new RectangleCommand(grid),
+            new EllipseCommand(grid),
+            new FillCommand(),
+            new ApplyCommand(),
             new ActionCommand(ConsoleKey.Escape, Escape, "Esc", "Escape"),
             new UndoCommand(),
             new ExitCommand(),
         };
-
-        private void ToggleRectangle()
-        {
-            if (IsRectangle)
-                FillShape();
-            else
-                _grid.Mode = GridMode.Rectangle;
-            this.RenderCommands();
-        }
 
         private void ToggleEllipse()
         {
@@ -69,16 +60,9 @@ namespace ConsoleDraw.Core
                 FillShape();
             else
                 _grid.Mode = GridMode.Ellipse;
-            this.RenderCommands();
         }
 
-        private bool IsRectangle => _grid.Mode == GridMode.Rectangle;
         private bool IsEllipse => _grid.Mode == GridMode.Ellipse;
-
-        private void Enter()
-        {
-            FillShape();
-        }
 
         private void Escape()
         {

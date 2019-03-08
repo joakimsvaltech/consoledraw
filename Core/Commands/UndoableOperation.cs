@@ -12,6 +12,7 @@
         public override void Undo() {
             DoUndo();
             Grid.CurrentPos = _oldPosition;
+            Grid.Mode = GridMode.None;
         }
         protected abstract void DoExecute();
         protected abstract void DoUndo();

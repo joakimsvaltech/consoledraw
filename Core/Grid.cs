@@ -17,6 +17,7 @@ namespace ConsoleDraw.Core
         private readonly Cell[,] _cells;
         private Point _current;
         private IShape? _activeShape;
+
         private GridMode _mode;
 
         private readonly Stack<IOperation> _operations = new Stack<IOperation>();
@@ -73,18 +74,17 @@ namespace ConsoleDraw.Core
             this.UpdateMarker();
         }
 
+        internal Cell[]? ActiveShadow => _activeShape?.Points.Select(p => this[p]).Select(c => c.Clone()).ToArray();
+
         public void Execute(ICommand command)
         {
-            var op = command.CreateOperation(this);
-            OnCommandExecuting(new OperationEventArgs(op));
-            op.Execute();
-            if (op.CanUndo)
-                _operations.Push(op);
+            Perform(command.CreateOperation(this));
         }
 
-        private void OnCommandExecuting(OperationEventArgs eventArgs)
+        internal void ApplyOperation()
         {
-            CommandExecuting?.Invoke(this, eventArgs);
+            if (_operations.TryPeek(out var lastOperation) && lastOperation.CanApply)
+                lastOperation.Apply();
         }
 
         internal void Undo()
@@ -143,13 +143,6 @@ namespace ConsoleDraw.Core
 
         public bool IsDrawing => Mode == GridMode.Drawing;
 
-        private IShape CreateShape() => Mode switch
-        {
-            GridMode.Rectangle => (IShape)new Rectangle(CurrentPos),
-            GridMode.Ellipse => new Ellipse(CurrentPos),
-            _ => throw new NotImplementedException($"{Mode} is not a shape")
-        };
-
         public Point NextPosition(Direction dir) => (Size + CurrentPos.Neighbour(dir)) % Size;
 
         public void Step(Direction dir)
@@ -164,6 +157,8 @@ namespace ConsoleDraw.Core
             this.UpdateMarker();
         }
 
+        public void Plot(Cell cell) => Plot(cell.Pos, cell.Color);
+
         public void Plot(Point? pos = null, ConsoleColor? color = null)
         {
             Paint(pos, color);
@@ -176,6 +171,26 @@ namespace ConsoleDraw.Core
             cell.Color = color ?? SelectedColor;
             this.Render(cell);
         }
+
+        private void Perform(IOperation operation)
+        {
+            OnCommandExecuting(new OperationEventArgs(operation));
+            operation.Execute();
+            if (operation.CanUndo)
+                _operations.Push(operation);
+        }
+
+        private void OnCommandExecuting(OperationEventArgs eventArgs)
+        {
+            CommandExecuting?.Invoke(this, eventArgs);
+        }
+
+        private IShape CreateShape() => Mode switch
+        {
+            GridMode.Rectangle => (IShape)new Rectangle(CurrentPos),
+            GridMode.Ellipse => new Ellipse(CurrentPos),
+            _ => throw new NotImplementedException($"{Mode} is not a shape")
+        };
 
         private void UpdateActiveShape()
         {
