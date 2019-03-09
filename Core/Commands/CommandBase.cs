@@ -5,6 +5,12 @@ namespace ConsoleDraw.Core
 {
     public abstract class CommandBase : ICommand
     {
+        private const ConsoleColor DefaultBackground = ConsoleColor.Black;
+        private const ConsoleColor ActiveBackground = ConsoleColor.White;
+        private const ConsoleColor DefaultForeground = ConsoleColor.Gray;
+        private const ConsoleColor ActiveForeground = ConsoleColor.Black;
+        private const ConsoleColor DisabledForeground = ConsoleColor.DarkGray;
+
         private readonly string _tag;
         private readonly string _name;
 
@@ -23,18 +29,25 @@ namespace ConsoleDraw.Core
         {
             if (!CanRender)
                 return;
-            Renderer.SetColor(TagBackground, TagForeground);
+            Renderer.SetColor(
+                IsActive ? ActiveBackground : DefaultBackground,
+                IsActive ? ActiveForeground : IsDisabled ? DisabledForeground : DefaultForeground);
             Console.Write(_tag);
-            Renderer.ResetColor();
+            Renderer.SetColor(
+                DefaultBackground,
+                IsDisabled ? DisabledForeground : DefaultForeground);
             Console.Write(". ");
-            Renderer.SetColor(NameBackground, NameForeground);
+            Renderer.SetColor(
+                IsDisabled ? DefaultBackground : NameBackground, 
+                IsDisabled ? DisabledForeground : NameForeground);
             Console.Write(_name);
         }
 
-        protected virtual ConsoleColor TagBackground => ConsoleColor.Black;
-        protected virtual ConsoleColor TagForeground => ConsoleColor.Gray;
-        protected virtual ConsoleColor NameBackground => ConsoleColor.Black;
-        protected virtual ConsoleColor NameForeground => ConsoleColor.Gray;
+        protected virtual bool IsActive => false;
+        protected virtual bool IsDisabled => false;
+
+        protected virtual ConsoleColor NameBackground => DefaultBackground;
+        protected virtual ConsoleColor NameForeground => DefaultForeground;
 
         protected static string GetName(string label) => label.Replace("_", "");
         protected static ConsoleKey GetKey(string label) => Enum.Parse<ConsoleKey>(GetTag(label));
