@@ -2,7 +2,7 @@
 
 namespace ConsoleDraw.Core
 {
-    public abstract class Operation : IOperation
+    public abstract class Operation : IExecutable
     {
         protected readonly Grid Grid;
         protected Operation(Grid grid) => Grid = grid;

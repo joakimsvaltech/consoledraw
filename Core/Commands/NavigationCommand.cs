@@ -9,7 +9,7 @@ namespace ConsoleDraw.Core
     {
         public NavigationCommand(ConsoleKey key, Direction direction) : base(key) => _direction = direction;
         private readonly Direction _direction;
-        public override IOperation CreateOperation(Grid grid) => new NavigationOperation(grid, _direction);
+        public override IExecutable CreateOperation(Grid grid) => new NavigationOperation(grid, _direction);
     }
 
     public class NavigationOperation : Operation

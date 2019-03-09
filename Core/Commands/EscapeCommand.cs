@@ -5,13 +5,27 @@ namespace ConsoleDraw.Core
 {
     public class EscapeCommand : CommandBase
     {
-        public EscapeCommand() : base(ConsoleKey.Escape, "Esc", "Escape") { }
-        public override IOperation CreateOperation(Grid grid) => new EscapeOperation(grid);
+        private IApplyable? _lastOperation;
+
+        public EscapeCommand(Grid grid) : base(ConsoleKey.Escape, "Esc", "Escape")
+        {
+            grid.CommandExecuted += Grid_CommandExecuted;
+        }
+
+        private void Grid_CommandExecuted(object sender, OperationEventArgs e)
+        {
+            if (e.Operation is IApplyable aop)
+                _lastOperation = aop;
+        }
+
+        public override IExecutable CreateOperation(Grid grid) => new EscapeOperation(this, grid);
 
         private class EscapeOperation : Operation
         {
-            public EscapeOperation(Grid grid) : base(grid) { }
-            public override bool Execute() => Grid.Mode != (Grid.Mode = GridMode.None);
+            private readonly EscapeCommand _command;
+
+            public EscapeOperation(EscapeCommand command, Grid grid) : base(grid) => _command = command;
+            public override bool Execute() => _command._lastOperation?.Deactivate() ?? false;
         }
     }
 }

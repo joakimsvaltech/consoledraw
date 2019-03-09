@@ -5,7 +5,7 @@ namespace ConsoleDraw.Core
 {
     public class ApplyCommand : CommandBase
     {
-        private IApplyableOperation? _lastOperation;
+        private IApplyable? _lastOperation;
 
         public ApplyCommand(Grid grid)
             : base(ConsoleKey.Enter, "Enter", "Apply")
@@ -13,12 +13,12 @@ namespace ConsoleDraw.Core
             grid.CommandExecuted += Grid_CommandExecuted;
         }
 
-        public override IOperation CreateOperation(Grid grid)
+        public override IExecutable CreateOperation(Grid grid)
             => new ApplyOperation(this, grid);
 
         private void Grid_CommandExecuted(object sender, OperationEventArgs e)
         {
-            if (e.Operation is IApplyableOperation aop)
+            if (e.Operation is IApplyable aop)
                 _lastOperation = aop;
         }
 

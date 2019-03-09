@@ -1,6 +1,6 @@
 ﻿namespace ConsoleDraw.Core.Commands.Operations
 {
-    public abstract class UndoableOperation : Operation, IUndoableOperation
+    public abstract class UndoableOperation : Operation, IUndoable
     {
         private Point _oldPosition = new Point();
         private Point _newPosition = new Point();
@@ -17,7 +17,6 @@
             _newPosition = Grid.CurrentPos;
             var res = DoUndo();
             Grid.CurrentPos = _oldPosition;
-            Grid.Mode = GridMode.None;
             return res || _newPosition != _oldPosition;
         }
 
@@ -25,7 +24,6 @@
         {
             var res = DoRedo();
             Grid.CurrentPos = _newPosition;
-            Grid.Mode = GridMode.None;
             return res || _newPosition != _oldPosition;
         }
 

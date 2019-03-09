@@ -5,7 +5,7 @@ namespace ConsoleDraw.Core
     public class Plot : CommandBase
     {
         internal Plot() : base("_Plot") { }
-        public override IOperation CreateOperation(Grid grid) => new PlotOperation(grid);
+        public override IExecutable CreateOperation(Grid grid) => new PlotOperation(grid);
 
         private class PlotOperation : UndoableOperation
         {

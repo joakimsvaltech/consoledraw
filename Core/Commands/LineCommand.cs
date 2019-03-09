@@ -3,18 +3,15 @@ using ConsoleDraw.Core.Shapes;
 
 namespace ConsoleDraw.Core
 {
-    public class LineCommand : ShapeCommand
+    public class LineCommand : ShapeCommand<LineOperation>
     {
-        internal LineCommand(Grid grid) : base(grid, "_Line", GridMode.Line) { }
-        public override IOperation CreateOperation(Grid grid) => new LineOperation(this, grid);
+        internal LineCommand(Grid grid) : base(grid, "_Line", grid => new LineOperation(grid)) { }
+    }
 
-        private class LineOperation : ShapeOperation
+    public class LineOperation : ShapeOperation<Line>
+    {
+        public LineOperation(Grid grid) : base(grid, pos => new Line(pos))
         {
-            public LineOperation(ShapeCommand command, Grid grid) : base(command, grid)
-            {
-            }
-
-            protected override IShape CreateShape() => new Line(Grid.CurrentPos);
         }
     }
 }

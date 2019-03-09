@@ -3,18 +3,13 @@ using ConsoleDraw.Core.Shapes;
 
 namespace ConsoleDraw.Core
 {
-    public class RectangleCommand : ShapeCommand
+    public class RectangleCommand : ShapeCommand<RectangleOperation>
     {
-        internal RectangleCommand(Grid grid) : base(grid, "_Rectangle", GridMode.Rectangle) { }
-        public override IOperation CreateOperation(Grid grid) => new RectangleOperation(this, grid);
+        internal RectangleCommand(Grid grid) : base(grid, "_Rectangle", grid => new RectangleOperation(grid)) { }
+    }
 
-        private class RectangleOperation : ShapeOperation
-        {
-            public RectangleOperation(ShapeCommand command, Grid grid) : base(command, grid)
-            {
-            }
-
-            protected override IShape CreateShape() => new Rectangle(Grid.CurrentPos);
-        }
+    public class RectangleOperation : ShapeOperation<Rectangle>
+    {
+        public RectangleOperation(Grid grid) : base(grid, pos => new Rectangle(pos)) {}
     }
 }

@@ -7,7 +7,7 @@ namespace ConsoleDraw.Core
     {
         ConsoleKey Key { get; }
         ConsoleModifiers Modifiers { get; }
-        IOperation CreateOperation(Grid grid);
+        IExecutable CreateOperation(Grid grid);
         void Render();
         bool CanRender { get; }
     }

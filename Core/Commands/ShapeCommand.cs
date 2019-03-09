@@ -1,11 +1,36 @@
-﻿namespace ConsoleDraw.Core
+﻿using ConsoleDraw.Core.Commands.Operations;
+using System;
+
+namespace ConsoleDraw.Core
 {
-    public abstract class ShapeCommand : CommandBase
+    public abstract class ShapeCommand<TShapeOperation> : CommandBase
+        where TShapeOperation : class, IShapeOperation
     {
-        private readonly Grid _grid;
-        internal ShapeCommand(Grid grid, string label, GridMode shapeMode) : base(label)
-            => (_grid, ShapeMode) = (grid, shapeMode);
-        protected override bool IsActive => _grid.Mode == ShapeMode;
-        public GridMode ShapeMode { get; }
+        private TShapeOperation? _activeOperation;
+        private readonly Func<Grid, TShapeOperation> _create;
+
+        internal ShapeCommand(Grid grid, string label, Func<Grid, TShapeOperation> create) : base(label)
+        {
+            grid.CommandExecuting += Grid_CommandExecuting;
+            _create = create;
+        }
+
+        public override IExecutable CreateOperation(Grid grid) => _create(grid);
+
+        private void Grid_CommandExecuting(object sender, OperationEventArgs e)
+        {
+            if (e.Operation is TShapeOperation sop) {
+                _activeOperation = sop;
+                _activeOperation.Deactivated += ActiveOperation_Deactivated;
+            }
+        }
+
+        private void ActiveOperation_Deactivated(object sender, EventArgs e)
+        {
+            if (_activeOperation == sender)
+                _activeOperation = null;
+        }
+
+        protected override bool IsActive => !(_activeOperation is null);
     }
 }

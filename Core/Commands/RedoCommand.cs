@@ -20,7 +20,7 @@ namespace ConsoleDraw.Core
                 _undos.Push(uop);
         }
 
-        public override IOperation CreateOperation(Grid grid) => new RedoOperation(this, grid);
+        public override IExecutable CreateOperation(Grid grid) => new RedoOperation(this, grid);
 
         internal UndoOperation? Pop() => _undos.Any() ? _undos.Pop() : null;
 

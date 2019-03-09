@@ -1,17 +1,23 @@
 ﻿using ConsoleDraw.Core.Commands.Operations;
 using ConsoleDraw.Core.Shapes;
+using System;
 using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public abstract class ShapeOperation : UndoableOperation, IApplyableOperation
+    public interface IShapeOperation : IExecutable, IApplyable { }
+
+    public abstract class ShapeOperation<TShape> : UndoableOperation, IShapeOperation
+        where TShape : class, IShape
     {
+        public event EventHandler<EventArgs> Deactivated;
+
         private Cell[] _oldCells = new Cell[0];
         private Cell[] _newCells = new Cell[0];
-        private readonly ShapeCommand _command;
-        private IShape? _activeShape;
+        private TShape? _activeShape;
+        private readonly Func<Point, TShape> _create;
 
-        public ShapeOperation(ShapeCommand command, Grid grid) : base(grid) => _command = command;
+        public ShapeOperation(Grid grid, Func<Point, TShape> create) : base(grid) => _create = create;
 
         public bool Apply()
         {
@@ -21,8 +27,15 @@ namespace ConsoleDraw.Core
             _oldCells = Grid.GetShadow(_activeShape);
             Grid.FillShape(_activeShape);
             _newCells = Grid.GetShadow(_activeShape);
-            Grid.Mode = GridMode.None;
             return _oldCells.SequenceEqual(_newCells);
+        }
+
+        public bool Deactivate()
+        {
+            if (_activeShape is null)
+                return false;
+            ExitShape();
+            return false;
         }
 
         protected override bool DoUndo() => Refill(_newCells, _oldCells);
@@ -39,19 +52,8 @@ namespace ConsoleDraw.Core
 
         protected override bool DoExecute()
         {
-            if (Grid.Mode == _command.ShapeMode)
-                Grid.Mode = GridMode.None;
-            else
-                StartDrawShape();
-            return Grid.Mode == _command.ShapeMode;
-        }
-
-        protected abstract IShape CreateShape();
-
-        private void StartDrawShape()
-        {
-            Grid.Mode = _command.ShapeMode;
             Grid.CommandExecuted += Grid_CommandExecuted;
+            return true;
         }
 
         private void Grid_CommandExecuted(object sender, OperationEventArgs e)
@@ -66,12 +68,13 @@ namespace ConsoleDraw.Core
 
         private void InitShape()
         {
-            _activeShape = CreateShape();
+            _activeShape = _create(Grid.CurrentPos);
             Grid.Mark(_activeShape);
         }
 
         private void ExitShape()
         {
+            Deactivated?.Invoke(this, new EventArgs());
             Grid.CommandExecuted -= Grid_CommandExecuted;
             Grid.Unmark(_activeShape);
         }

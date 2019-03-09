@@ -16,7 +16,7 @@ namespace ConsoleDraw.Core
         protected override ConsoleColor NameForeground => ConsoleColor.White;
         protected override bool IsActive => _isActiveChecker();
 
-        public override IOperation CreateOperation(Grid grid) => new ColorOperation(grid, _color);
+        public override IExecutable CreateOperation(Grid grid) => new ColorOperation(grid, _color);
 
         private class ColorOperation : Operation
         {

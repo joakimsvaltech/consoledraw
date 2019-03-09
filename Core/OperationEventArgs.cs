@@ -5,7 +5,7 @@ namespace ConsoleDraw.Core
 {
     public class OperationEventArgs : EventArgs
     {
-        public OperationEventArgs(IOperation op) => Operation = op;
-        public IOperation Operation { get; }
+        public OperationEventArgs(IExecutable op) => Operation = op;
+        public IExecutable Operation { get; }
     }
 }

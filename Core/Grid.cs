@@ -6,11 +6,6 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public enum GridMode
-    {
-        None, Drawing, Rectangle, Ellipse, Line
-    }
-
     public class Grid
     {
         public event EventHandler<OperationEventArgs> CommandExecuting;
@@ -19,8 +14,6 @@ namespace ConsoleDraw.Core
         private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
-
-        private GridMode _mode;
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -94,20 +87,6 @@ namespace ConsoleDraw.Core
         }
 
         public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;
-        public GridMode Mode
-        {
-            get => _mode;
-            set
-            {
-                if (value == _mode)
-                    return;
-                _mode = value;
-                if (_mode == GridMode.Drawing)
-                    Plot();
-            }
-        }
-
-        public bool IsDrawing => Mode == GridMode.Drawing;
 
         public Point NextPosition(Direction dir) => (Size + CurrentPos.Neighbour(dir)) % Size;
 
@@ -139,7 +118,7 @@ namespace ConsoleDraw.Core
             this.Render(cell);
         }
 
-        private void Perform(IOperation operation)
+        private void Perform(IExecutable operation)
         {
             CommandExecuting?.Invoke(this, new OperationEventArgs(operation));
             if (operation.Execute())

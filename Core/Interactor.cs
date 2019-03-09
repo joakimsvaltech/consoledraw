@@ -51,7 +51,7 @@ namespace ConsoleDraw.Core
             new LineCommand(grid),
             new FillCommand(),
             new ApplyCommand(grid),
-            new EscapeCommand(),
+            new EscapeCommand(grid),
             new UndoCommand(grid),
             new RedoCommand(grid),
             new ExitCommand(),
