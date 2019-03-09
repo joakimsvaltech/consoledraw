@@ -10,10 +10,12 @@ namespace ConsoleDraw.Core
     {
         public event EventHandler<OperationEventArgs> CommandExecuting;
         public event EventHandler<OperationEventArgs> CommandExecuted;
+        public event EventHandler<ColorEventArgs> ColorChanged;
 
         private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
+        private ConsoleColor _selectedColor = (ConsoleColor)1;
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -86,7 +88,17 @@ namespace ConsoleDraw.Core
             }
         }
 
-        public ConsoleColor SelectedColor { get; set; } = (ConsoleColor)1;
+        public ConsoleColor SelectedColor
+        {
+            get => _selectedColor;
+            set
+            {
+                if (_selectedColor == value)
+                    return;
+                _selectedColor = value;
+                ColorChanged?.Invoke(this, new ColorEventArgs(_selectedColor));
+            }
+        }
 
         public Point NextPosition(Direction dir) => (Size + CurrentPos.Neighbour(dir)) % Size;
 

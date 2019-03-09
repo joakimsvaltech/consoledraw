@@ -9,7 +9,13 @@ namespace ConsoleDraw.Core
         private readonly Grid _grid;
         private readonly IDictionary<ConsoleKey, ICommand[]> _commands;
 
-        public Interactor(Grid grid) => (_grid, _commands) = (grid, GetCommands(grid));
+        public Interactor(Grid grid)
+        {
+            _grid = grid;
+            _commands = GetCommands(grid);
+            Commands.ForEach(c => c.Activated += (o, e) => this.Render());
+            Commands.ForEach(c => c.Inactivated += (o, e) => this.Render());
+        }
 
         public Point Origin => _grid.Origin * (_grid.Size.Y + 1);
 
@@ -21,7 +27,6 @@ namespace ConsoleDraw.Core
             if (command is ExitCommand)
                 return false;
             _grid.Execute(command);
-            this.RenderCommands();
             return true;
         }
 

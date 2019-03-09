@@ -5,16 +5,28 @@ namespace ConsoleDraw.Core
 {
     public class ColorCommand : CommandBase
     {
-        private readonly Func<bool> _isActiveChecker;
+        private readonly Grid _grid;
         private readonly ConsoleColor _color;
 
         public ColorCommand(Grid grid, ConsoleColor color)
             : base(Enum.Parse<ConsoleKey>($"D{(int)color}"), $"{(int)color}", $"{color}")
-            => (_color, _isActiveChecker) = (color, () => grid.SelectedColor == color);
+        {
+            _grid = grid;
+            _grid.ColorChanged += Grid_ColorChanged;
+            _color = color;
+        }
 
-        protected override ConsoleColor NameBackground => _color;
-        protected override ConsoleColor NameForeground => ConsoleColor.White;
-        protected override bool IsActive => _isActiveChecker();
+        private void Grid_ColorChanged(object sender, ColorEventArgs e)
+        {
+            if (_grid.SelectedColor == _color)
+                OnActivated();
+            else
+                OnInactivated();
+        }
+
+        public override ConsoleColor NameBackground => _color;
+        public override ConsoleColor NameForeground => ConsoleColor.White;
+        public override bool IsActive => _grid.SelectedColor == _color;
 
         public override IExecutable CreateOperation(Grid grid) => new ColorOperation(grid, _color);
 

@@ -5,49 +5,38 @@ namespace ConsoleDraw.Core
 {
     public abstract class CommandBase : ICommand
     {
-        private const ConsoleColor DefaultBackground = ConsoleColor.Black;
-        private const ConsoleColor ActiveBackground = ConsoleColor.White;
-        private const ConsoleColor DefaultForeground = ConsoleColor.Gray;
-        private const ConsoleColor ActiveForeground = ConsoleColor.Black;
-        private const ConsoleColor DisabledForeground = ConsoleColor.DarkGray;
+        public event EventHandler<EventArgs> Activated;
+        public event EventHandler<EventArgs> Inactivated;
 
-        private readonly string _tag;
-        private readonly string _name;
+        public string Tag { get; }
+        public string Name { get; }
 
         protected CommandBase(string label)
             : this(GetKey(label), GetTag(label), GetName(label)) {
         }
 
         protected CommandBase(ConsoleKey key = ConsoleKey.NoName, string tag = "", string name = "", ConsoleModifiers modifiers = default)
-            => (Key, _tag, _name, Modifiers) = (key, tag, name, modifiers);
+            => (Key, Tag, Name, Modifiers) = (key, tag, name, modifiers);
 
         public ConsoleKey Key { get; }
         public ConsoleModifiers Modifiers { get; }
-        public bool CanRender => !string.IsNullOrEmpty(_tag);
+        public bool CanRender => !string.IsNullOrEmpty(Tag);
 
-        public void Render()
+        protected void OnActivated()
         {
-            if (!CanRender)
-                return;
-            Renderer.SetColor(
-                IsActive ? ActiveBackground : DefaultBackground,
-                IsActive ? ActiveForeground : IsDisabled ? DisabledForeground : DefaultForeground);
-            Console.Write(_tag);
-            Renderer.SetColor(
-                DefaultBackground,
-                IsDisabled ? DisabledForeground : DefaultForeground);
-            Console.Write(". ");
-            Renderer.SetColor(
-                IsDisabled ? DefaultBackground : NameBackground, 
-                IsDisabled ? DisabledForeground : NameForeground);
-            Console.Write(_name);
+            Activated?.Invoke(this, new EventArgs());
         }
 
-        protected virtual bool IsActive => false;
-        protected virtual bool IsDisabled => false;
+        protected void OnInactivated()
+        {
+            Inactivated?.Invoke(this, new EventArgs());
+        }
 
-        protected virtual ConsoleColor NameBackground => DefaultBackground;
-        protected virtual ConsoleColor NameForeground => DefaultForeground;
+        public virtual bool IsActive => false;
+        public virtual bool IsDisabled => false;
+
+        public virtual ConsoleColor NameBackground => CommandRenderer.DefaultBackground;
+        public virtual ConsoleColor NameForeground => CommandRenderer.DefaultForeground;
 
         protected static string GetName(string label) => label.Replace("_", "");
         protected static ConsoleKey GetKey(string label) => Enum.Parse<ConsoleKey>(GetTag(label));

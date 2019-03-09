@@ -19,18 +19,24 @@ namespace ConsoleDraw.Core
 
         private void Grid_CommandExecuting(object sender, OperationEventArgs e)
         {
-            if (e.Operation is TShapeOperation sop) {
+            bool wasActive = IsActive;
+            if (e.Operation is TShapeOperation sop)
+            {
                 _activeOperation = sop;
                 _activeOperation.Deactivated += ActiveOperation_Deactivated;
+                if (!wasActive) OnActivated();
             }
         }
 
         private void ActiveOperation_Deactivated(object sender, EventArgs e)
         {
             if (_activeOperation == sender)
+            {
                 _activeOperation = null;
+                OnInactivated();
+            }
         }
 
-        protected override bool IsActive => !(_activeOperation is null);
+        public override bool IsActive => !(_activeOperation is null);
     }
 }

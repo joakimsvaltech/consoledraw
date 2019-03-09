@@ -49,7 +49,7 @@ namespace ConsoleDraw.Genesis
             grid.Render();
             var originalPosition = grid.SetPosition();
             var interactor = new Interactor(grid);
-            interactor.RenderCommands();
+            interactor.Render();
             while (interactor.Interact()) { }
             Console.SetCursorPosition(originalPosition.X, originalPosition.Y);
         }
