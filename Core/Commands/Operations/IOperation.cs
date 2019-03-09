@@ -3,10 +3,16 @@
     public interface IOperation
     {
         bool Execute();
+    }
+
+    public interface IUndoableOperation : IOperation
+    {
         bool Undo();
         bool Redo();
+    }
+
+    public interface IApplyableOperation : IUndoableOperation
+    {
         bool Apply();
-        bool CanUndo { get; }
-        bool CanApply { get; }
     }
 }

@@ -1,11 +1,10 @@
 ﻿namespace ConsoleDraw.Core.Commands.Operations
 {
-    public abstract class UndoableOperation : Operation
+    public abstract class UndoableOperation : Operation, IUndoableOperation
     {
         private Point _oldPosition = new Point();
         private Point _newPosition = new Point();
         protected UndoableOperation(Grid grid) : base(grid) { }
-        public override bool CanUndo => true;
 
         public override bool Execute()
         {
@@ -13,7 +12,7 @@
             return DoExecute();
         }
 
-        public override bool Undo()
+        public bool Undo()
         {
             _newPosition = Grid.CurrentPos;
             var res = DoUndo();
@@ -22,7 +21,7 @@
             return res || _newPosition != _oldPosition;
         }
 
-        public override bool Redo()
+        public bool Redo()
         {
             var res = DoRedo();
             Grid.CurrentPos = _newPosition;

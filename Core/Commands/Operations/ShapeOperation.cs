@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public abstract class ShapeOperation : ApplyableOperation
+    public abstract class ShapeOperation : UndoableOperation, IApplyableOperation
     {
         private Cell[] _oldCells = new Cell[0];
         private Cell[] _newCells = new Cell[0];
@@ -13,7 +13,7 @@ namespace ConsoleDraw.Core
 
         public ShapeOperation(ShapeCommand command, Grid grid) : base(grid) => _command = command;
 
-        public override bool Apply()
+        public bool Apply()
         {
             if (_activeShape is null)
                 return false;

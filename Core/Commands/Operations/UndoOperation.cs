@@ -3,7 +3,7 @@
     public class UndoOperation : UndoableOperation
     {
         private readonly UndoCommand _command;
-        private IOperation? _undoneOperation;
+        private IUndoableOperation? _undoneOperation;
         public UndoOperation(UndoCommand command, Grid grid) : base(grid) => _command = command;
 
         protected override bool DoExecute()
