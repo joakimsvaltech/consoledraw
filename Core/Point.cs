@@ -39,6 +39,8 @@ namespace ConsoleDraw.Core
 
         public Point Right => new Point(X + 1, Y);
 
+        public Point Invert() => new Point(Y, X);
+
         public override bool Equals(object obj)
             => obj is Point p && Equals(p);
 

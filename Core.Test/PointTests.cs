@@ -53,19 +53,40 @@ namespace Core.Test
         }
 
         [Theory]
-        [InlineData(0, 0, 0, 0, 0, 0)]
-        [InlineData(0, 0, 1, 0, 0, 0, 1, 0)]
-        [InlineData(0, 0, 2, 0, 0, 0, 1, 0, 2, 0)]
-        [InlineData(0, 0, 0, 1, 0, 0, 0, 1)]
-        [InlineData(2, 3, 2, 4, 2, 3, 2, 4)]
-        [InlineData(2, 3, 0, 3, 2, 3, 1, 3, 0, 3)]
-        public void To_return_inclusive_range_between_points(int x, int y, int endX, int endY, params int[] expectedCoords)
+        [InlineData(0, 0, 0, 0, 
+            0, 0)]
+        [InlineData(0, 0, 1, 0, 
+            0, 0, 1, 0)]
+        [InlineData(0, 0, 2, 0, 
+            0, 0, 1, 0, 2, 0)]
+        [InlineData(0, 0, 0, 1, 
+            0, 0, 0, 1)]
+        [InlineData(2, 3, 2, 4, 
+            2, 3, 2, 4)]
+        [InlineData(2, 3, 0, 3,
+            2, 3, 1, 3, 0, 3)]
+        [InlineData(3, 3, 2, 2,
+            3, 3, 2, 2)]
+        [InlineData(3, 3, 4, 2,
+            3, 3, 4, 2)]
+        [InlineData(3, 3, 2, 4,
+            3, 3, 2, 4)]
+        [InlineData(3, 3, 4, 4,
+            3, 3, 4, 4)]
+        [InlineData(3, 3, 6, 5,
+            3, 3, 4, 4, 5, 4, 6, 5)]
+        [InlineData(3, 3, 6, 1,
+            3, 3, 4, 2, 5, 2, 6, 1)]
+        [InlineData(3, 3, 6, 4,
+            3, 3, 4, 3, 5, 4, 6, 4)]
+        public void To_return_inclusive_range_between_points(int x, int y, int endX, int endY, 
+            params int[] expectedCoords)
         {
             var start = new Point(x, y);
             var end = new Point(endX, endY);
-            var result = start.To(end);
+            var result = start.To(end).ToArray();
             var expected = TestUtils.GetPoints(expectedCoords);
-            Assert.Equal(result, expected);
+            Assert.Equal(expected, result);
         }
     }
 }
