@@ -1,4 +1,4 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Commands.Operations;
 
 namespace ConsoleDraw.Core
 {
@@ -9,22 +9,29 @@ namespace ConsoleDraw.Core
 
         private class PlotOperation : UndoableOperation
         {
-            private Point _oldPos;
-            private ConsoleColor _oldColor;
+            private Cell? _oldCell;
+            private Cell? _newCell;
 
             public PlotOperation(Grid grid) : base(grid) { }
 
-            protected override void DoExecute()
+            protected override bool DoExecute()
             {
-                var cell = Grid.Peek();
-                _oldPos = cell.Pos;
-                _oldColor = cell.Color;
+                _oldCell = Grid.CurrentCell.Clone();
                 Grid.Plot();
+                _newCell = Grid.CurrentCell.Clone();
+                return _oldCell! != _newCell!;
             }
 
-            protected override void DoUndo()
+            protected override bool DoUndo() => Replot(_newCell, _oldCell);
+
+            protected override bool DoRedo() => Replot(_oldCell, _newCell);
+
+            private bool Replot(Cell? from, Cell? to)
             {
-                Grid.Plot(_oldPos, _oldColor);
+                if (to is null || to == from!)
+                    return false;
+                Grid.Plot(to);
+                return true;
             }
         }
     }

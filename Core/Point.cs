@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ConsoleDraw.Core
 {
@@ -8,10 +7,10 @@ namespace ConsoleDraw.Core
         public Point(int x, int y) => (X, Y) = (x, y);
 
         public static bool operator ==(Point left, Point right)
-            => left.X == right.X && left.Y == right.Y;
+            => left.Equals(right);
 
         public static bool operator !=(Point left, Point right)
-            => left.X != right.X || left.Y != right.Y;
+            => !left.Equals(right);
 
         public static Point operator +(Point left, Point right)
             => new Point(left.X + right.X, left.Y + right.Y);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Commands.Operations;
+using System;
 
 namespace ConsoleDraw.Core
 {
@@ -11,10 +12,11 @@ namespace ConsoleDraw.Core
             : this(GetKey(label), GetTag(label), GetName(label)) {
         }
 
-        protected CommandBase(ConsoleKey key = ConsoleKey.NoName, string tag = "", string name = "")
-            => (Key, _tag, _name) = (key, tag, name);
+        protected CommandBase(ConsoleKey key = ConsoleKey.NoName, string tag = "", string name = "", ConsoleModifiers modifiers = default)
+            => (Key, _tag, _name, Modifiers) = (key, tag, name, modifiers);
 
         public ConsoleKey Key { get; }
+        public ConsoleModifiers Modifiers { get; }
         public bool CanRender => !string.IsNullOrEmpty(_tag);
 
         public void Render()

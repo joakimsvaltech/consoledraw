@@ -1,4 +1,5 @@
-﻿using ConsoleDraw.Core.Shapes;
+﻿using ConsoleDraw.Core.Commands.Operations;
+using ConsoleDraw.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,6 @@ namespace ConsoleDraw.Core
         private Point _current;
 
         private GridMode _mode;
-
-        private readonly Stack<IOperation> _operations = new Stack<IOperation>();
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -65,7 +64,7 @@ namespace ConsoleDraw.Core
             return originalPos;
         }
 
-        public Cell Peek() => this[CurrentPos];
+        public Cell CurrentCell => this[CurrentPos];
 
         public void Render()
         {
@@ -80,23 +79,6 @@ namespace ConsoleDraw.Core
         {
             Perform(command.CreateOperation(this));
         }
-
-        internal void ApplyOperation()
-        {
-            if (_operations.TryPeek(out var lastOperation) && lastOperation.CanApply)
-                lastOperation.Apply();
-        }
-
-        internal void Undo()
-        {
-            if (_operations.Any())
-                _operations.Pop().Undo();
-        }
-
-        public IEnumerable<Cell> Row(int rowIndex)
-                => _cells.Row(rowIndex);
-
-        public Cell CurrentCell => this[CurrentPos];
 
         public Point CurrentPos
         {
@@ -129,9 +111,10 @@ namespace ConsoleDraw.Core
 
         public Point NextPosition(Direction dir) => (Size + CurrentPos.Neighbour(dir)) % Size;
 
-        public void Step(Direction dir)
+        public bool Step(Direction dir)
         {
             CurrentPos = NextPosition(dir);
+            return true;
         }
 
         public void Fill()
@@ -159,10 +142,8 @@ namespace ConsoleDraw.Core
         private void Perform(IOperation operation)
         {
             CommandExecuting?.Invoke(this, new OperationEventArgs(operation));
-            operation.Execute();
-            if (operation.CanUndo)
-                _operations.Push(operation);
-            CommandExecuted?.Invoke(this, new OperationEventArgs(operation));
+            if (operation.Execute())
+                CommandExecuted?.Invoke(this, new OperationEventArgs(operation));
         }
 
         private static Cell[,] CreateCells(Point size)

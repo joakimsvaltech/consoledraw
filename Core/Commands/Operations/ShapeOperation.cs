@@ -1,35 +1,49 @@
-﻿using ConsoleDraw.Core.Shapes;
+﻿using ConsoleDraw.Core.Commands.Operations;
+using ConsoleDraw.Core.Shapes;
+using System.Linq;
 
 namespace ConsoleDraw.Core
 {
     public abstract class ShapeOperation : ApplyableOperation
     {
         private Cell[] _oldCells = new Cell[0];
+        private Cell[] _newCells = new Cell[0];
         private readonly ShapeCommand _command;
         private IShape? _activeShape;
 
         public ShapeOperation(ShapeCommand command, Grid grid) : base(grid) => _command = command;
 
-        public override void Apply()
+        public override bool Apply()
         {
             if (_activeShape is null)
-                return;
+                return false;
+            ExitShape();
             _oldCells = Grid.GetShadow(_activeShape);
             Grid.FillShape(_activeShape);
+            _newCells = Grid.GetShadow(_activeShape);
             Grid.Mode = GridMode.None;
+            return _oldCells.SequenceEqual(_newCells);
         }
 
-        protected override void DoUndo()
+        protected override bool DoUndo() => Refill(_newCells, _oldCells);
+
+        protected override bool DoRedo() => Refill(_oldCells, _newCells);
+
+        private bool Refill(Cell[] from, Cell[] to)
         {
-            _oldCells.ForEach(Grid.Plot);
+            if (from.SequenceEqual(to))
+                return false;
+            to.ForEach(Grid.Plot);
+            return true;
         }
 
-        protected override void DoExecute()
+        protected override bool DoExecute()
         {
             if (Grid.Mode == _command.ShapeMode)
                 Grid.Mode = GridMode.None;
             else
                 StartDrawShape();
+            return Grid.Mode == _command.ShapeMode;
         }
 
         protected abstract IShape CreateShape();

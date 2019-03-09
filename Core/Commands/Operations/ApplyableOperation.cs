@@ -1,4 +1,4 @@
-﻿namespace ConsoleDraw.Core
+﻿namespace ConsoleDraw.Core.Commands.Operations
 {
     public abstract class ApplyableOperation : UndoableOperation
     {

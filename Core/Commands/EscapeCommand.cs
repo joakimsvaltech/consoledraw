@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Commands.Operations;
+using System;
 
 namespace ConsoleDraw.Core
 {
@@ -10,7 +11,7 @@ namespace ConsoleDraw.Core
         private class EscapeOperation : Operation
         {
             public EscapeOperation(Grid grid) : base(grid) { }
-            public override void Execute() => Grid.Mode = GridMode.None;
+            public override bool Execute() => Grid.Mode != (Grid.Mode = GridMode.None);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public class Cell
+    public class Cell : IEquatable<Cell?>
     {
         public Point Pos { get; set; }
         public ConsoleColor Color { get; set; }
@@ -33,6 +33,21 @@ namespace ConsoleDraw.Core
                 Pos = Pos
             };
 
+        public static bool operator ==(Cell left, Cell right)
+            => left.Equals(right);
+
+        public static bool operator !=(Cell left, Cell right)
+            => !left.Equals(right);
+
         public override string ToString() => $"{Pos}:{Tag}{(int)Color}";
+
+        public bool Equals(Cell? other)
+            => !(other is null) && other.Pos == Pos && other.Color == Color && other.Tag == Tag;
+
+        public override bool Equals(object obj)
+            => Equals(obj as Cell);
+
+        public override int GetHashCode()
+            => Pos.GetHashCode() + Color.GetHashCode() + Tag.GetHashCode();
     }
 }

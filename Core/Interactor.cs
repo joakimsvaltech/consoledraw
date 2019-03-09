@@ -7,7 +7,7 @@ namespace ConsoleDraw.Core
     public class Interactor
     {
         private readonly Grid _grid;
-        private readonly IDictionary<ConsoleKey, ICommand> _commands;
+        private readonly IDictionary<ConsoleKey, ICommand[]> _commands;
 
         public Interactor(Grid grid) => (_grid, _commands) = (grid, GetCommands(grid));
 
@@ -25,13 +25,14 @@ namespace ConsoleDraw.Core
             return true;
         }
 
-        internal IEnumerable<ICommand> Commands => _commands.Values;
+        internal IEnumerable<ICommand> Commands => _commands.Values.SelectMany(c => c);
 
-        private IDictionary<ConsoleKey, ICommand> GetCommands(Grid grid)
+        private IDictionary<ConsoleKey, ICommand[]> GetCommands(Grid grid)
             => GetArrowCommands()
             .Concat(GetActionCommands(grid))
             .Concat(GetColorCommands(grid))
-            .ToDictionary(c => c.Key, c => c);
+            .GroupBy(c => c.Key, c => c)
+            .ToDictionary(g => g.Key, g => g.ToArray());
 
         private ICommand[] GetArrowCommands()
             => new[] {
@@ -49,9 +50,10 @@ namespace ConsoleDraw.Core
             new EllipseCommand(grid),
             new LineCommand(grid),
             new FillCommand(),
-            new ApplyCommand(),
+            new ApplyCommand(grid),
             new EscapeCommand(),
-            new UndoCommand(),
+            new UndoCommand(grid),
+            new RedoCommand(grid),
             new ExitCommand(),
         };
 
@@ -65,6 +67,7 @@ namespace ConsoleDraw.Core
             => GetCommand(Console.ReadKey(true));
 
         private ICommand? GetCommand(ConsoleKeyInfo keyInfo)
-            => _commands.TryGetValue(keyInfo.Key, out var command) ? command : null;
+            => _commands.TryGetValue(keyInfo.Key, out var command) 
+            ? command.SingleOrDefault(c => c.Modifiers == keyInfo.Modifiers) : null;
     }
 }

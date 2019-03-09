@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ConsoleDraw.Core.Commands.Operations;
+using System.Linq;
 
 namespace ConsoleDraw.Core
 {
@@ -10,18 +11,30 @@ namespace ConsoleDraw.Core
         private class FillOperation : UndoableOperation
         {
             private Cell[] _oldCells = new Cell[0];
+            private Cell[] _newCells = new Cell[0];
 
             public FillOperation(Grid grid) : base(grid) { }
 
-            protected override void DoExecute()
+            protected override bool DoExecute()
             {
-                _oldCells = Grid.GetArea(Grid.CurrentPos).Select(c => c.Clone()).ToArray();
+                _oldCells = GetFillShadow();
                 Grid.Fill();
+                _newCells = GetFillShadow();
+                return !_oldCells.SequenceEqual(_newCells);
             }
 
-            protected override void DoUndo()
+            private Cell[] GetFillShadow() => Grid.GetArea(Grid.CurrentPos).Select(c => c.Clone()).ToArray();
+
+            protected override bool DoUndo() => Refill(_newCells, _oldCells);
+
+            protected override bool DoRedo() => Refill(_oldCells, _newCells);
+
+            private bool Refill(Cell[] from, Cell[] to)
             {
-                _oldCells.ForEach(Grid.Plot);
+                if (from.SequenceEqual(to))
+                    return false;
+                to.ForEach(Grid.Plot);
+                return true;
             }
         }
     }

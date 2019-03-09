@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Commands.Operations;
+using System;
 
 namespace ConsoleDraw.Core
 {
@@ -30,7 +31,7 @@ namespace ConsoleDraw.Core
             public ColorOperation(Grid grid, ConsoleColor color)
                 : base(grid) => _color = color;
 
-            public override void Execute() => Grid.SelectedColor = _color;
+            public override bool Execute() => Grid.SelectedColor != (Grid.SelectedColor = _color);
         }
     }
 }

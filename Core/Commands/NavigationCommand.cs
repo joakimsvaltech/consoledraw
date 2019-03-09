@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Commands.Operations;
+using System;
 
 namespace ConsoleDraw.Core
 {
@@ -15,6 +16,6 @@ namespace ConsoleDraw.Core
     {
         public Direction Direction { get; }
         public NavigationOperation(Grid grid, Direction direction) : base(grid) => Direction = direction;
-        public override void Execute() => Grid.Step(Direction);
+        public override bool Execute() => Grid.Step(Direction);
     }
 }

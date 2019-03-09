@@ -7,34 +7,34 @@ namespace ConsoleDraw.Core.Shapes
     {
         private Point _end;
         private readonly Point _start;
-        private Point _size;
 
-        public Rectangle(Point start, Point? end = null) => (_start, End) = (start, end ?? start);
+        private int Top => Math.Min(_start.Y, _end.Y);
+        private int Bottom => Math.Max(_start.Y, _end.Y);
+        private int Left => Math.Min(_start.X, _end.X);
+        private int Right => Math.Max(_start.X, _end.X);
+        private int Width => Right - Left;
+        private Point UpperLeft => new Point(Left, Top);
+        private Point LowerLeft => new Point(Left, Bottom);
+        private Point UpperRight => new Point(Right, Top);
+        private Point LowerRight => new Point(Right, Bottom);
+
+        public Rectangle(Point start, Point? end = null) => (_start, _end) = (start, end ?? start);
 
         public void Update(Point point)
         {
-            End = point;
-        }
-
-        private Point End
-        {
-            set
-            {
-                _end = value;
-                _size = new Point(Math.Abs(_end.X - _start.X), Math.Abs(_end.Y - _start.Y));
-            }
+            _end = point;
         }
 
         public Point[] Area
-            => _start.To(_start * _size.Y)
-            .SelectMany(left => left.To(left + _size.X))
+            => UpperLeft.To(LowerLeft)
+            .SelectMany(left => left.To(left + Width))
             .ToArray();
 
         public Point[] Outline
-                => _start.To(_start + _size.X)
-                    .Concat(_start.To(_start * _size.Y))
-                    .Concat((_start + _size.X).To((_start + _size.X) * _size.Y))
-                    .Concat((_start * _size.Y).To(_start * _size.Y + _size.X))
+                => UpperLeft.To(UpperRight)
+                    .Concat(UpperLeft.To(LowerLeft))
+                    .Concat(UpperRight.To(LowerRight))
+                    .Concat(LowerLeft.To(LowerRight))
             .Distinct()
             .ToArray();
     }
