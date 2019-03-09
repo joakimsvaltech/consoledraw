@@ -7,6 +7,8 @@ namespace ConsoleDraw.Core.Commands.Operations
     {
         event EventHandler<EventArgs> Deactivated;
         bool Apply();
+        bool Reapply();
+        bool Unapply();
         bool Deactivate();
     }
 }

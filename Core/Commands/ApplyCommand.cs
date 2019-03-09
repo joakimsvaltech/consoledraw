@@ -22,12 +22,18 @@ namespace ConsoleDraw.Core
                 _lastOperation = aop;
         }
 
-        private class ApplyOperation : Operation
+        private class ApplyOperation : UndoableOperation
         {
             private readonly ApplyCommand _command;
+            private IApplyable? _appliedOperation;
 
             public ApplyOperation(ApplyCommand command, Grid grid) : base(grid) => _command = command;
-            public override bool Execute() => _command._lastOperation?.Apply() ?? false;
+
+            protected override bool DoExecute() => (_appliedOperation = _command._lastOperation)?.Apply() ?? false;
+
+            protected override bool DoRedo() => _appliedOperation?.Reapply() ?? false;
+
+            protected override bool DoUndo() => _appliedOperation?.Unapply() ?? false;
         }
     }
 }

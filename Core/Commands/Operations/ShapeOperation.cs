@@ -7,7 +7,7 @@ namespace ConsoleDraw.Core
 {
     public interface IShapeOperation : IExecutable, IApplyable { }
 
-    public abstract class ShapeOperation<TShape> : UndoableOperation, IShapeOperation
+    public abstract class ShapeOperation<TShape> : Operation, IShapeOperation
         where TShape : class, IShape
     {
         public event EventHandler<EventArgs> Deactivated;
@@ -27,7 +27,7 @@ namespace ConsoleDraw.Core
             _oldCells = Grid.GetShadow(_activeShape);
             Grid.FillShape(_activeShape);
             _newCells = Grid.GetShadow(_activeShape);
-            return _oldCells.SequenceEqual(_newCells);
+            return !_oldCells.SequenceEqual(_newCells);
         }
 
         public bool Deactivate()
@@ -38,9 +38,9 @@ namespace ConsoleDraw.Core
             return false;
         }
 
-        protected override bool DoUndo() => Refill(_newCells, _oldCells);
+        public bool Reapply() => Refill(_oldCells, _newCells);
 
-        protected override bool DoRedo() => Refill(_oldCells, _newCells);
+        public bool Unapply() => Refill(_newCells, _oldCells);
 
         private bool Refill(Cell[] from, Cell[] to)
         {
@@ -50,7 +50,7 @@ namespace ConsoleDraw.Core
             return true;
         }
 
-        protected override bool DoExecute()
+        public override bool Execute()
         {
             Grid.CommandExecuted += Grid_CommandExecuted;
             return true;
