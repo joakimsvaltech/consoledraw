@@ -32,9 +32,9 @@ namespace ConsoleDraw.Core
             if (_activeShape is null)
                 return false;
             ExitShape();
-            _oldCells = _grid.GetShadow(_activeShape);
+            _oldCells = GetShadow(_activeShape);
             _grid.FillShape(_activeShape);
-            _newCells = _grid.GetShadow(_activeShape);
+            _newCells = GetShadow(_activeShape);
             return !_oldCells.SequenceEqual(_newCells);
         }
 
@@ -49,6 +49,8 @@ namespace ConsoleDraw.Core
         public bool Reapply() => Refill(_oldCells, _newCells);
 
         public bool Unapply() => Refill(_newCells, _oldCells);
+
+        private Cell[] GetShadow(IShape shape) => shape.Area.Select(p => _grid[p]).Select(c => c.Clone()).ToArray();
 
         private bool Refill(Cell[] from, Cell[] to)
         {

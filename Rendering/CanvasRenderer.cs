@@ -23,6 +23,27 @@ namespace ConsoleDraw.Rendering
             _canvas.CellsChanged += Canvas_CellsChanged;
         }
 
+        public void Render()
+        {
+            _canvas.Positions.ForEach(Render);
+            Mark(_currentMarkedPos);
+        }
+
+        public void Fill(IEnumerable<Cell> area)
+        {
+            area.ForEach(Render);
+        }
+
+        public void Unmark(params Point[] points)
+        {
+            points.ForEach(Render);
+        }
+
+        public void Mark(params Point[] points)
+        {
+            points.ForEach(Mark);
+        }
+
         private void Canvas_CellsChanged(object sender, Core.Events.CellsEventArgs e)
         {
             e.Cells.ForEach(Render);
@@ -67,26 +88,6 @@ namespace ConsoleDraw.Rendering
             Mark(_currentMarkedPos);
         }
 
-        public void Render()
-        {
-            _canvas.Positions.ForEach(Render);
-        }
-
-        public void Fill(IEnumerable<Cell> area)
-        {
-            area.ForEach(Render);
-        }
-
-        public void Unmark(params Point[] points)
-        {
-            points.ForEach(Render);
-        }
-
-        public void Mark(params Point[] points)
-        {
-            points.ForEach(Mark);
-        }
-
         private void Render(Point pos) => Render(_canvas[pos]);
 
         private void Render(Cell cell)
@@ -109,7 +110,7 @@ namespace ConsoleDraw.Rendering
 
         private void PositionCursor(Point pos)
         {
-            Renderer.PositionCursor(_origin + pos);
+            Renderer.CursorPosition = _origin + pos;
         }
     }
 }

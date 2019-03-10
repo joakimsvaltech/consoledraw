@@ -40,25 +40,27 @@ namespace ConsoleDraw.Genesis
 
         static void Run()
         {
+            var canvas = CreateCanvas();
+            var origin = new Point(Console.CursorLeft, Console.CursorTop);
+            var interactor = new Interactor(canvas);
+            Render(canvas, interactor, origin);
+            while (interactor.Interact()) { }
+            Renderer.CursorPosition = origin;
+        }
+
+        private static void Render(Canvas canvas, Interactor interactor, Point origin)
+        {
+            new CanvasRenderer(canvas, origin).Render();
+            new InteractorRenderer(interactor.Commands, origin * (canvas.Size.Y + 1)).Render();
+        }
+
+        private static Canvas CreateCanvas()
+        {
             var cols = Input("number of columns", 10, 200);
             var rows = Input("number of rows", 10, 50);
             var colors = Input("number of colours", 2, 9);
             Console.WriteLine($"Generating grid with {cols} columns, {rows} rows and {colors} colors");
-            var originalPosition = new Point(Console.CursorLeft, Console.CursorTop);
-            var grid = new Canvas(new Point(cols, rows), colors);
-            grid.RandomFill();
-            var largestConnectedArea = grid.FindLargestConnectedArea();
-            grid.Annotate(largestConnectedArea);
-            Console.SetCursorPosition(originalPosition.X, originalPosition.Y);
-            var canvasRenderer = new CanvasRenderer(grid, originalPosition);
-            canvasRenderer.Render();
-            var interactor = new Interactor(grid);
-            var commandRenderer = new CommandRenderer(interactor.Commands, originalPosition * (grid.Size.Y + 1));
-            interactor.Commands.ForEach(c => c.Activated += (o, e) => commandRenderer.Render());
-            interactor.Commands.ForEach(c => c.Inactivated += (o, e) => commandRenderer.Render());
-            commandRenderer.Render();
-            while (interactor.Interact()) { }
-            Console.SetCursorPosition(originalPosition.X, originalPosition.Y);
+            return new Canvas(new Point(cols, rows), colors);
         }
 
         private static int Input(string value, int defaultValue = 0, int maxValue = int.MaxValue)

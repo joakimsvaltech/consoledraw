@@ -16,9 +16,10 @@ namespace ConsoleDraw.Core
             Console.ForegroundColor = fg;
         }
 
-        public static void PositionCursor(Point absPos)
+        public static Point CursorPosition
         {
-            Console.SetCursorPosition(absPos.X, absPos.Y);
+            get => new Point(Console.CursorLeft, Console.CursorTop);
+            set => Console.SetCursorPosition(value.X, value.Y);
         }
     }
 }

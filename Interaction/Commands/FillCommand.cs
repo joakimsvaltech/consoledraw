@@ -1,6 +1,5 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
-using ConsoleDraw.Core.Geometry;
-using ConsoleDraw.Core.Interaction;
+﻿using ConsoleDraw.Core.Interaction;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleDraw.Core
@@ -10,33 +9,32 @@ namespace ConsoleDraw.Core
         internal FillCommand(Canvas grid) : base(grid, "_Fill") { }
         public override IExecutable CreateOperation() => new FillOperation(Grid);
 
-        private class FillOperation : UndoableOperation
+        private class FillOperation : PaintOperation
         {
-            private Cell[] _oldCells = new Cell[0];
-            private Cell[] _newCells = new Cell[0];
-
             public FillOperation(Canvas grid) : base(grid) { }
 
-            protected override bool DoExecute()
+            protected override void Paint()
             {
-                _oldCells = GetFillShadow();
-                Grid.Fill();
-                _newCells = GetFillShadow();
-                return !_oldCells.SequenceEqual(_newCells);
+                Grid.Paint(GetFilledCells());
             }
 
-            private Cell[] GetFillShadow() => Grid.GetArea(Grid.CurrentPos).Select(c => c.Clone()).ToArray();
+            protected override Cell[] GetShadow() => GetArea().Select(c => c.Clone()).ToArray();
 
-            protected override bool DoUndo() => Refill(_newCells, _oldCells);
+            private IEnumerable<Cell> GetFilledCells() => GetArea().Select(c => c.Clone(color: Grid.SelectedColor));
 
-            protected override bool DoRedo() => Refill(_oldCells, _newCells);
-
-            private bool Refill(Cell[] from, Cell[] to)
+            private IEnumerable<Cell> GetArea()
             {
-                if (from.SequenceEqual(to))
-                    return false;
-                to.ForEach(Grid.Plot);
-                return true;
+                var next = Grid[Grid.CurrentPos];
+                var color = next.Color;
+                var area = new HashSet<Cell> { next };
+                var neighbours = new Stack<Cell>(next.Neighbours(Grid).Where(n => n.Color == color));
+                while (neighbours.Any())
+                {
+                    next = neighbours.Pop();
+                    area.Add(next);
+                    next.Neighbours(Grid).Where(n => n.Color == color).Except(area).ForEach(n => neighbours.Push(n));
+                }
+                return area;
             }
         }
     }

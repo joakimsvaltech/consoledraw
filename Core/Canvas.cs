@@ -17,13 +17,16 @@ namespace ConsoleDraw.Core
         public event EventHandler<PointEventArgs> CurrentPositionChanged;
         
 
-        private static readonly Random Rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
         private ConsoleColor _selectedColor = (ConsoleColor)1;
         public readonly Highlight Highlight = new Highlight();
 
-        public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
+        public IEnumerable<Cell> Cells => _cells
+            .OfType<Cell>()
+            .Where(c => c.Pos.X < Size.X && c.Pos.Y < Size.Y)
+            .Select(c => c.Clone());
+
         public Point Size { get; }
         public Point Origin { get; private set; }
         public int ColorCount { get; }
@@ -31,8 +34,11 @@ namespace ConsoleDraw.Core
         public IEnumerable<Point> Positions => Points(Size);
 
         public Canvas(Point size, int colorCount)
-            => (Size, ColorCount, _cells)
-            = (size, colorCount, CreateCells(size.Diagonal(1)));
+        {
+            Size = size;
+            ColorCount = colorCount;
+            _cells = CreateCells(size.Diagonal(1));
+        }
 
         public Cell this[Point pos]
         {
@@ -45,16 +51,16 @@ namespace ConsoleDraw.Core
             OnCellsChanged(shape.Area.Select(pos => Paint(pos, SelectedColor)));
         }
 
-        public Cell[] GetShadow(IShape shape) => shape.Area.Select(p => this[p]).Select(c => c.Clone()).ToArray();
-
-        public void RandomFill()
+        public void Paint(IEnumerable<Cell> cells)
         {
-            Positions.ForEach(pos => this[pos] = GenerateCell(pos, ColorCount));
+            cells.ForEach(c => Paint(c.Pos, c.Color));
+            OnCellsChanged(cells);
         }
 
-        public void Annotate(IEnumerable<Cell> area)
+        public void Annotate(IEnumerable<Cell> cells)
         {
-            area.ForEach(cell => this[cell.Pos].Tag = cell.Tag);
+            cells.ForEach(c => this[c.Pos].Tag = c.Tag);
+            OnCellsChanged(cells);
         }
 
         public Cell CurrentCell => this[CurrentPos];
@@ -96,28 +102,6 @@ namespace ConsoleDraw.Core
             return true;
         }
 
-        public void Fill()
-        {
-            var area = GetArea(CurrentPos);
-            area.ForEach(cell => cell.Color = SelectedColor);
-            OnCellsChanged(area);
-        }
-
-        public IEnumerable<Cell> GetArea(Point center)
-        {
-            var next = this[center];
-            var color = next.Color;
-            var area = new HashSet<Cell> { next };
-            var neighbours = new Stack<Cell>(next.Neighbours(this).Where(n => n.Color == color));
-            while (neighbours.Any())
-            {
-                next = neighbours.Pop();
-                area.Add(next);
-                next.Neighbours(this).Where(n => n.Color == color).Except(area).ForEach(n => neighbours.Push(n));
-            }
-            return area;
-        }
-
         public void Plot(Cell cell) => Plot(cell.Pos, cell.Color);
 
         public void Plot()
@@ -125,7 +109,7 @@ namespace ConsoleDraw.Core
             Plot(CurrentPos, SelectedColor);
         }
 
-        public void Plot(Point pos, ConsoleColor color)
+        private void Plot(Point pos, ConsoleColor color)
         {
             Paint(pos, color);
             OnCellChanged(this[pos]);
@@ -151,7 +135,8 @@ namespace ConsoleDraw.Core
             foreach (var pos in Points(size))
                 cells[pos.X, pos.Y] = new Cell
                 {
-                    Pos = pos
+                    Pos = pos,
+                    Color = ConsoleColor.DarkGray
                 };
             return cells;
         }
@@ -162,13 +147,6 @@ namespace ConsoleDraw.Core
                 for (int y = 0; y < size.Y; y++)
                     yield return new Point(x, y);
         }
-
-        private static Cell GenerateCell(Point pos, int colors)
-            => new Cell
-            {
-                Pos = pos,
-                Color = (ConsoleColor)(Rand.Next(colors) + 1)
-            };
 
         private void OnCellChanged(Cell cell)
         {
