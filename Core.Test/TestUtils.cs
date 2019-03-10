@@ -1,4 +1,5 @@
 ﻿using ConsoleDraw.Core;
+using ConsoleDraw.Core.Geometry;
 using System.Linq;
 
 namespace Core.Test

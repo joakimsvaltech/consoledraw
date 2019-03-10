@@ -1,5 +1,4 @@
-﻿using ConsoleDraw.Core;
-using ConsoleDraw.Core.Shapes;
+﻿using ConsoleDraw.Core.Geometry;
 using Xunit;
 
 namespace Core.Test

@@ -1,4 +1,4 @@
-﻿using ConsoleDraw.Core;
+﻿using ConsoleDraw.Core.Geometry;
 using System.Linq;
 using Xunit;
 

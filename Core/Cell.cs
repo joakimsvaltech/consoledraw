@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,16 +11,16 @@ namespace ConsoleDraw.Core
         public ConsoleColor Color { get; set; }
         public char Tag { get; set; } = ' ';
 
-        public IEnumerable<Cell> Neighbours(Grid grid)
+        public IEnumerable<Cell> Neighbours(Canvas grid)
             => NorthWestNeighbours(grid).Concat(SouthEastNeighbours(grid));
 
-        public IEnumerable<Cell> NorthWestNeighbours(Grid grid)
+        public IEnumerable<Cell> NorthWestNeighbours(Canvas grid)
         {
             if (Pos.X > 0) yield return grid[Pos.Left];
             if (Pos.Y > 0) yield return grid[Pos.Up];
         }
 
-        public IEnumerable<Cell> SouthEastNeighbours(Grid grid)
+        public IEnumerable<Cell> SouthEastNeighbours(Canvas grid)
         {
             if (Pos.X < grid.Size.X - 1) yield return grid[Pos.Right];
             if (Pos.Y < grid.Size.Y - 1) yield return grid[Pos.Down];

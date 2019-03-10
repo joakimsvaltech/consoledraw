@@ -1,4 +1,6 @@
 ﻿using ConsoleDraw.Core;
+using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Core.Interaction;
 using System;
 using System.Runtime.InteropServices;
 
@@ -15,7 +17,6 @@ namespace ConsoleDraw.Genesis
 
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
         private const int MAXIMIZE = 3;
-
 
         static void Main()
         {
@@ -42,7 +43,7 @@ namespace ConsoleDraw.Genesis
             var rows = Input("number of rows", 10, 50);
             var colors = Input("number of colours", 2, 9);
             Console.WriteLine($"Generating grid with {cols} columns, {rows} rows and {colors} colors");
-            var grid = new Grid(cols, rows, colors);
+            var grid = new Canvas(cols, rows, colors);
             grid.RandomFill();
             var largestConnectedArea = grid.FindLargestConnectedArea();
             grid.Annotate(largestConnectedArea);
