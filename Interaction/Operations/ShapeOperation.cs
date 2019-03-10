@@ -56,7 +56,7 @@ namespace ConsoleDraw.Core
         {
             if (from.SequenceEqual(to))
                 return false;
-            to.ForEach(_grid.Plot);
+            _grid.Paint(to);
             return true;
         }
 

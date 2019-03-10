@@ -30,7 +30,7 @@ namespace ConsoleDraw.Core
         {
             if (from.SequenceEqual(to))
                 return false;
-            to.ForEach(Grid.Plot);
+            Grid.Paint(to);
             return true;
         }
     }
