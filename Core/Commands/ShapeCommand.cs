@@ -9,13 +9,13 @@ namespace ConsoleDraw.Core
         private TShapeOperation? _activeOperation;
         private readonly Func<Grid, TShapeOperation> _create;
 
-        internal ShapeCommand(Grid grid, string label, Func<Grid, TShapeOperation> create) : base(label)
+        internal ShapeCommand(Grid grid, string label, Func<Grid, TShapeOperation> create) : base(grid, label)
         {
-            grid.CommandExecuting += Grid_CommandExecuting;
             _create = create;
+            grid.CommandExecuting += Grid_CommandExecuting;
         }
 
-        public override IExecutable CreateOperation(Grid grid) => _create(grid);
+        public override IExecutable CreateOperation() => _create(Grid);
 
         private void Grid_CommandExecuting(object sender, OperationEventArgs e)
         {

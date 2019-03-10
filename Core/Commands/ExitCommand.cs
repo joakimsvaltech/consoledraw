@@ -2,6 +2,6 @@
 {
     public class ExitCommand : CommandBase
     {
-        internal ExitCommand() : base("E_xit") { }
+        internal ExitCommand(Grid grid) : base(grid, "E_xit") { }
     }
 }

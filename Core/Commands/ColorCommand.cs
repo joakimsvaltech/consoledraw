@@ -5,20 +5,18 @@ namespace ConsoleDraw.Core
 {
     public class ColorCommand : CommandBase
     {
-        private readonly Grid _grid;
         private readonly ConsoleColor _color;
 
         public ColorCommand(Grid grid, ConsoleColor color)
-            : base(Enum.Parse<ConsoleKey>($"D{(int)color}"), $"{(int)color}", $"{color}")
+            : base(grid, Enum.Parse<ConsoleKey>($"D{(int)color}"), $"{(int)color}", $"{color}")
         {
-            _grid = grid;
-            _grid.ColorChanged += Grid_ColorChanged;
+            grid.ColorChanged += Grid_ColorChanged;
             _color = color;
         }
 
         private void Grid_ColorChanged(object sender, ColorEventArgs e)
         {
-            if (_grid.SelectedColor == _color)
+            if (Grid.SelectedColor == _color)
                 OnActivated();
             else
                 OnInactivated();
@@ -26,18 +24,22 @@ namespace ConsoleDraw.Core
 
         public override ConsoleColor NameBackground => _color;
         public override ConsoleColor NameForeground => ConsoleColor.White;
-        public override bool IsActive => _grid.SelectedColor == _color;
+        public override bool IsActive => Grid.SelectedColor == _color;
 
-        public override IExecutable CreateOperation(Grid grid) => new ColorOperation(grid, _color);
+        public override IExecutable CreateOperation() => new ColorOperation(Grid, _color);
 
-        private class ColorOperation : Operation
+        private class ColorOperation : IExecutable
         {
             private readonly ConsoleColor _color;
+            private readonly Grid _grid;
 
             public ColorOperation(Grid grid, ConsoleColor color)
-                : base(grid) => _color = color;
+            {
+                _grid = grid;
+                _color = color;
+            }
 
-            public override bool Execute() => Grid.SelectedColor != (Grid.SelectedColor = _color);
+            public bool Execute() => _grid.SelectedColor != (_grid.SelectedColor = _color);
         }
     }
 }

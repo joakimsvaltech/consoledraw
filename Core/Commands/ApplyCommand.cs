@@ -8,13 +8,13 @@ namespace ConsoleDraw.Core
         private IApplyable? _lastOperation;
 
         public ApplyCommand(Grid grid)
-            : base(ConsoleKey.Enter, "Enter", "Apply")
+            : base(grid, ConsoleKey.Enter, "Enter", "Apply")
         {
             grid.CommandExecuted += Grid_CommandExecuted;
         }
 
-        public override IExecutable CreateOperation(Grid grid)
-            => new ApplyOperation(this, grid);
+        public override IExecutable CreateOperation()
+            => new ApplyOperation(this, Grid);
 
         private void Grid_CommandExecuted(object sender, OperationEventArgs e)
         {

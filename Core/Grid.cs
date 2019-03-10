@@ -12,7 +12,7 @@ namespace ConsoleDraw.Core
         public event EventHandler<OperationEventArgs> CommandExecuted;
         public event EventHandler<ColorEventArgs> ColorChanged;
 
-        private static readonly Random rand = new Random((int)DateTime.Now.Ticks);
+        private static readonly Random _rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
         private ConsoleColor _selectedColor = (ConsoleColor)1;
@@ -72,7 +72,7 @@ namespace ConsoleDraw.Core
 
         public void Execute(ICommand command)
         {
-            Perform(command.CreateOperation(this));
+            Perform(command.CreateOperation());
         }
 
         public Point CurrentPos
@@ -159,7 +159,7 @@ namespace ConsoleDraw.Core
             => new Cell
             {
                 Pos = pos,
-                Color = (ConsoleColor)(rand.Next(colors) + 1)
+                Color = (ConsoleColor)(_rand.Next(colors) + 1)
             };
     }
 }

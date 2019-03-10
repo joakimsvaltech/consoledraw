@@ -7,7 +7,7 @@ namespace ConsoleDraw.Core
 {
     public interface IShapeOperation : IExecutable, IApplyable { }
 
-    public abstract class ShapeOperation<TShape> : Operation, IShapeOperation
+    public abstract class ShapeOperation<TShape> : IShapeOperation
         where TShape : class, IShape
     {
         public event EventHandler<EventArgs> Deactivated;
@@ -15,18 +15,23 @@ namespace ConsoleDraw.Core
         private Cell[] _oldCells = new Cell[0];
         private Cell[] _newCells = new Cell[0];
         private TShape? _activeShape;
+        private readonly Grid _grid;
         private readonly Func<Point, TShape> _create;
 
-        public ShapeOperation(Grid grid, Func<Point, TShape> create) : base(grid) => _create = create;
+        public ShapeOperation(Grid grid, Func<Point, TShape> create)
+        {
+            _grid = grid;
+            _create = create;
+        }
 
         public bool Apply()
         {
             if (_activeShape is null)
                 return false;
             ExitShape();
-            _oldCells = Grid.GetShadow(_activeShape);
-            Grid.FillShape(_activeShape);
-            _newCells = Grid.GetShadow(_activeShape);
+            _oldCells = _grid.GetShadow(_activeShape);
+            _grid.FillShape(_activeShape);
+            _newCells = _grid.GetShadow(_activeShape);
             return !_oldCells.SequenceEqual(_newCells);
         }
 
@@ -46,13 +51,13 @@ namespace ConsoleDraw.Core
         {
             if (from.SequenceEqual(to))
                 return false;
-            to.ForEach(Grid.Plot);
+            to.ForEach(_grid.Plot);
             return true;
         }
 
-        public override bool Execute()
+        public bool Execute()
         {
-            Grid.CommandExecuted += Grid_CommandExecuted;
+            _grid.CommandExecuted += Grid_CommandExecuted;
             return true;
         }
 
@@ -68,22 +73,22 @@ namespace ConsoleDraw.Core
 
         private void InitShape()
         {
-            _activeShape = _create(Grid.CurrentPos);
-            Grid.Mark(_activeShape);
+            _activeShape = _create(_grid.CurrentPos);
+            _grid.Mark(_activeShape);
         }
 
         private void ExitShape()
         {
             Deactivated?.Invoke(this, new EventArgs());
-            Grid.CommandExecuted -= Grid_CommandExecuted;
-            Grid.Unmark(_activeShape);
+            _grid.CommandExecuted -= Grid_CommandExecuted;
+            _grid.Unmark(_activeShape);
         }
 
         private void UpdateShape()
         {
-            Grid.Unmark(_activeShape);
-            _activeShape!.Update(Grid.CurrentPos);
-            Grid.Mark(_activeShape);
+            _grid.Unmark(_activeShape);
+            _activeShape!.Update(_grid.CurrentPos);
+            _grid.Mark(_activeShape);
         }
     }
 }

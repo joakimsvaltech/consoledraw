@@ -8,18 +8,19 @@ namespace ConsoleDraw.Core
         public event EventHandler<EventArgs> Activated;
         public event EventHandler<EventArgs> Inactivated;
 
-        public string Tag { get; }
-        public string Name { get; }
-
-        protected CommandBase(string label)
-            : this(GetKey(label), GetTag(label), GetName(label)) {
+        protected CommandBase(Grid grid, string label)
+            : this(grid, GetKey(label), GetTag(label), GetName(label)) {
         }
 
-        protected CommandBase(ConsoleKey key = ConsoleKey.NoName, string tag = "", string name = "", ConsoleModifiers modifiers = default)
-            => (Key, Tag, Name, Modifiers) = (key, tag, name, modifiers);
+        protected CommandBase(Grid grid, ConsoleKey key = ConsoleKey.NoName, string tag = "", string name = "", ConsoleModifiers modifiers = default)
+            => (Grid ,Key, Tag, Name, Modifiers) = (grid, key, tag, name, modifiers);
 
+        public string Tag { get; }
+        public string Name { get; }
         public ConsoleKey Key { get; }
         public ConsoleModifiers Modifiers { get; }
+        protected Grid Grid { get; }
+
         public bool CanRender => !string.IsNullOrEmpty(Tag);
 
         protected void OnActivated()
@@ -42,6 +43,6 @@ namespace ConsoleDraw.Core
         protected static ConsoleKey GetKey(string label) => Enum.Parse<ConsoleKey>(GetTag(label));
         protected static string GetTag(string label) => $"{char.ToUpper(label[label.IndexOf('_') + 1])}";
 
-        public virtual IExecutable CreateOperation(Grid grid) => throw new NotImplementedException();
+        public virtual IExecutable CreateOperation() => throw new NotImplementedException();
     }
 }

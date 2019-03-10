@@ -7,15 +7,24 @@ namespace ConsoleDraw.Core
 
     public class NavigationCommand : CommandBase
     {
-        public NavigationCommand(ConsoleKey key, Direction direction) : base(key) => _direction = direction;
         private readonly Direction _direction;
-        public override IExecutable CreateOperation(Grid grid) => new NavigationOperation(grid, _direction);
+
+        public NavigationCommand(Grid grid, ConsoleKey key, Direction direction) : base(grid, key) => _direction = direction;
+
+        public override IExecutable CreateOperation() => new NavigationOperation(Grid, _direction);
     }
 
-    public class NavigationOperation : Operation
+    public class NavigationOperation : IExecutable
     {
+        private readonly Grid _grid;
+
         public Direction Direction { get; }
-        public NavigationOperation(Grid grid, Direction direction) : base(grid) => Direction = direction;
-        public override bool Execute() => Grid.Step(Direction);
+        public NavigationOperation(Grid grid, Direction direction)
+        {
+            _grid = grid;
+            Direction = direction;
+        }
+
+        public bool Execute() => _grid.Step(Direction);
     }
 }

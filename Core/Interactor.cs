@@ -33,33 +33,33 @@ namespace ConsoleDraw.Core
         internal IEnumerable<ICommand> Commands => _commands.Values.SelectMany(c => c);
 
         private IDictionary<ConsoleKey, ICommand[]> GetCommands(Grid grid)
-            => GetArrowCommands()
+            => GetArrowCommands(grid)
             .Concat(GetActionCommands(grid))
             .Concat(GetColorCommands(grid))
             .GroupBy(c => c.Key, c => c)
             .ToDictionary(g => g.Key, g => g.ToArray());
 
-        private ICommand[] GetArrowCommands()
+        private ICommand[] GetArrowCommands(Grid grid)
             => new[] {
-            new NavigationCommand(ConsoleKey.UpArrow, Direction.Up),
-            new NavigationCommand(ConsoleKey.DownArrow, Direction.Down),
-            new NavigationCommand(ConsoleKey.LeftArrow, Direction.Left),
-            new NavigationCommand(ConsoleKey.RightArrow, Direction.Right)
+            new NavigationCommand(grid, ConsoleKey.UpArrow, Direction.Up),
+            new NavigationCommand(grid, ConsoleKey.DownArrow, Direction.Down),
+            new NavigationCommand(grid, ConsoleKey.LeftArrow, Direction.Left),
+            new NavigationCommand(grid, ConsoleKey.RightArrow, Direction.Right)
         };
 
         private ICommand[] GetActionCommands(Grid grid)
             => new ICommand[] {
-            new Plot(),
+            new Plot(grid),
             new DrawCommand(grid),
             new RectangleCommand(grid),
             new EllipseCommand(grid),
             new LineCommand(grid),
-            new FillCommand(),
+            new FillCommand(grid),
             new ApplyCommand(grid),
             new EscapeCommand(grid),
             new UndoCommand(grid),
             new RedoCommand(grid),
-            new ExitCommand(),
+            new ExitCommand(grid),
         };
 
         private IEnumerable<ColorCommand> GetColorCommands(Grid grid)

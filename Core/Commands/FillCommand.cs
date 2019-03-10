@@ -5,8 +5,8 @@ namespace ConsoleDraw.Core
 {
     public class FillCommand : CommandBase
     {
-        internal FillCommand() : base("_Fill") { }
-        public override IExecutable CreateOperation(Grid grid) => new FillOperation(grid);
+        internal FillCommand(Grid grid) : base(grid, "_Fill") { }
+        public override IExecutable CreateOperation() => new FillOperation(Grid);
 
         private class FillOperation : UndoableOperation
         {

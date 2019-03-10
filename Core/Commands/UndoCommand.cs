@@ -6,12 +6,11 @@ namespace ConsoleDraw.Core
 {
     public partial class UndoCommand : CommandBase
     {
-        private readonly Grid _grid;
         private readonly Stack<IUndoable> _operations = new Stack<IUndoable>();
 
-        internal UndoCommand(Grid grid) : base("_Undo") {
-            _grid = grid;
-            _grid.CommandExecuted += Grid_CommandExecuted;
+        internal UndoCommand(Grid grid) : base(grid, "_Undo")
+        {
+            grid.CommandExecuted += Grid_CommandExecuted;
         }
 
         internal IUndoable? Pop() => _operations.Any() ? _operations.Pop() : null;
@@ -22,6 +21,6 @@ namespace ConsoleDraw.Core
                 _operations.Push(uop);
         }
 
-        public override IExecutable CreateOperation(Grid grid) => new UndoOperation(this, grid);
+        public override IExecutable CreateOperation() => new UndoOperation(this, Grid);
     }
 }

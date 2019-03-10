@@ -1,12 +1,14 @@
 ﻿namespace ConsoleDraw.Core.Commands.Operations
 {
-    public abstract class UndoableOperation : Operation, IUndoable
+    public abstract class UndoableOperation : IExecutable, IUndoable
     {
         private Point _oldPosition = new Point();
         private Point _newPosition = new Point();
-        protected UndoableOperation(Grid grid) : base(grid) { }
+        protected readonly Grid Grid;
 
-        public override bool Execute()
+        protected UndoableOperation(Grid grid) => Grid = grid;
+
+        public bool Execute()
         {
             _oldPosition = Grid.CurrentPos;
             return DoExecute();

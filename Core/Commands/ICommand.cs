@@ -11,7 +11,7 @@ namespace ConsoleDraw.Core
         ConsoleColor NameBackground { get; }
         ConsoleColor NameForeground { get; }
         ConsoleModifiers Modifiers { get; }
-        IExecutable CreateOperation(Grid grid);
+        IExecutable CreateOperation();
         bool CanRender { get; }
         bool IsActive { get; }
         bool IsDisabled { get; }

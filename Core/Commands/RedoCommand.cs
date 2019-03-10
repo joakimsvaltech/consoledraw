@@ -9,7 +9,7 @@ namespace ConsoleDraw.Core
     {
         private readonly Stack<UndoOperation> _undos = new Stack<UndoOperation>();
 
-        internal RedoCommand(Grid grid) : base(ConsoleKey.U, "Shift-U", "Redo", ConsoleModifiers.Shift)
+        internal RedoCommand(Grid grid) : base(grid, ConsoleKey.U, "Shift-U", "Redo", ConsoleModifiers.Shift)
         {
             grid.CommandExecuted += Grid_CommandExecuted;
         }
@@ -20,7 +20,7 @@ namespace ConsoleDraw.Core
                 _undos.Push(uop);
         }
 
-        public override IExecutable CreateOperation(Grid grid) => new RedoOperation(this, grid);
+        public override IExecutable CreateOperation() => new RedoOperation(this, Grid);
 
         internal UndoOperation? Pop() => _undos.Any() ? _undos.Pop() : null;
 
