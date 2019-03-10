@@ -33,7 +33,7 @@ namespace ConsoleDraw.Core
                 return false;
             ExitShape();
             _oldCells = GetShadow(_activeShape);
-            _grid.FillShape(_activeShape);
+            _grid.Fill(_activeShape);
             _newCells = GetShadow(_activeShape);
             return !_oldCells.SequenceEqual(_newCells);
         }

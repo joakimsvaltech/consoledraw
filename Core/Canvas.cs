@@ -46,15 +46,14 @@ namespace ConsoleDraw.Core
             set => _cells[pos.X, pos.Y] = value;
         }
 
-        public void FillShape(IShape shape)
+        public void Fill(IShape shape)
         {
             OnCellsChanged(shape.Area.Select(pos => Paint(pos, SelectedColor)));
         }
 
         public void Paint(IEnumerable<Cell> cells)
         {
-            cells.ForEach(c => Paint(c.Pos, c.Color));
-            OnCellsChanged(cells);
+            OnCellsChanged(cells.Select(c => Paint(c.Pos, c.Color)));
         }
 
         public void Annotate(IEnumerable<Cell> cells)
