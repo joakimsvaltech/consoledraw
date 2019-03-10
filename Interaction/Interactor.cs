@@ -14,11 +14,7 @@ namespace ConsoleDraw.Core.Interaction
         {
             _grid = grid;
             _commands = GetCommands(grid);
-            Commands.ForEach(c => c.Activated += (o, e) => this.Render());
-            Commands.ForEach(c => c.Inactivated += (o, e) => this.Render());
         }
-
-        public Point Origin => _grid.Origin * (_grid.Size.Y + 1);
 
         public bool Interact()
         {
@@ -31,7 +27,7 @@ namespace ConsoleDraw.Core.Interaction
             return true;
         }
 
-        internal IEnumerable<ICommand> Commands => _commands.Values.SelectMany(c => c);
+        public IEnumerable<ICommand> Commands => _commands.Values.SelectMany(c => c);
 
         private IDictionary<ConsoleKey, ICommand[]> GetCommands(Canvas grid)
             => GetArrowCommands(grid)

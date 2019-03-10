@@ -1,9 +1,11 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core.Events;
+using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Operations;
 using System;
 
 namespace ConsoleDraw.Core
 {
-    public class ColorCommand : CommandBase
+    public partial class ColorCommand : CommandBase
     {
         private readonly ConsoleColor _color;
 
@@ -22,24 +24,10 @@ namespace ConsoleDraw.Core
                 OnInactivated();
         }
 
-        public override ConsoleColor NameBackground => _color;
-        public override ConsoleColor NameForeground => ConsoleColor.White;
+        public override ConsoleColor? NameBackground => _color;
+        public override ConsoleColor? NameForeground => ConsoleColor.White;
         public override bool IsActive => Grid.SelectedColor == _color;
 
         public override IExecutable CreateOperation() => new ColorOperation(Grid, _color);
-
-        private class ColorOperation : IExecutable
-        {
-            private readonly ConsoleColor _color;
-            private readonly Canvas _grid;
-
-            public ColorOperation(Canvas grid, ConsoleColor color)
-            {
-                _grid = grid;
-                _color = color;
-            }
-
-            public bool Execute() => _grid.SelectedColor != (_grid.SelectedColor = _color);
-        }
     }
 }

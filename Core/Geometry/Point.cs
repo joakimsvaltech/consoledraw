@@ -59,5 +59,7 @@ namespace ConsoleDraw.Core.Geometry
             Direction.Right => Right,
             _ => throw new NotImplementedException()
         };
+
+        public Point Diagonal(int offset) => new Point(X + offset, Y + offset);
     }
 }

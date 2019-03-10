@@ -1,4 +1,6 @@
 ﻿using ConsoleDraw.Core.Commands.Operations;
+using ConsoleDraw.Core.Events;
+using ConsoleDraw.Core.Interaction;
 using System;
 using System.Collections.Generic;
 using System.Linq;

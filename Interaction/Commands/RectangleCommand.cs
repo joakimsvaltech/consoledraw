@@ -1,5 +1,4 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
-using ConsoleDraw.Core.Geometry;
+﻿using ConsoleDraw.Core.Geometry;
 
 namespace ConsoleDraw.Core
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleDraw.Core
+namespace ConsoleDraw.Core.Events
 {
     public class ColorEventArgs : EventArgs
     {

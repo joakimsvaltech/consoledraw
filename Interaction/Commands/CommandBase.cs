@@ -1,4 +1,4 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core.Interaction;
 using System;
 
 namespace ConsoleDraw.Core
@@ -36,8 +36,8 @@ namespace ConsoleDraw.Core
         public virtual bool IsActive => false;
         public virtual bool IsDisabled => false;
 
-        public virtual ConsoleColor NameBackground => CommandRenderer.DefaultBackground;
-        public virtual ConsoleColor NameForeground => CommandRenderer.DefaultForeground;
+        public virtual ConsoleColor? NameBackground => null;
+        public virtual ConsoleColor? NameForeground => null;
 
         protected static string GetName(string label) => label.Replace("_", "");
         protected static ConsoleKey GetKey(string label) => Enum.Parse<ConsoleKey>(GetTag(label));

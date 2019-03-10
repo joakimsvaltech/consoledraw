@@ -1,5 +1,6 @@
 ﻿using ConsoleDraw.Core.Commands.Operations;
 using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Core.Interaction;
 using System.Linq;
 
 namespace ConsoleDraw.Core

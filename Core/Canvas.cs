@@ -1,5 +1,6 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core.Events;
 using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Core.Interaction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,16 @@ namespace ConsoleDraw.Core
         public event EventHandler<OperationEventArgs> CommandExecuting;
         public event EventHandler<OperationEventArgs> CommandExecuted;
         public event EventHandler<ColorEventArgs> ColorChanged;
+        public event EventHandler<CellsEventArgs> CellsChanged;
+        public event EventHandler<CellEventArgs> CellChanged;
+        public event EventHandler<PointEventArgs> CurrentPositionChanged;
+        
 
-        private static readonly Random _rand = new Random((int)DateTime.Now.Ticks);
+        private static readonly Random Rand = new Random((int)DateTime.Now.Ticks);
         private readonly Cell[,] _cells;
         private Point _current;
         private ConsoleColor _selectedColor = (ConsoleColor)1;
+        public readonly Highlight Highlight = new Highlight();
 
         public IEnumerable<Cell> Cells => _cells.OfType<Cell>();
         public Point Size { get; }
@@ -24,9 +30,9 @@ namespace ConsoleDraw.Core
         public IEnumerable<ConsoleColor> Colors => Enumerable.Range(1, ColorCount).Select(index => (ConsoleColor)index);
         public IEnumerable<Point> Positions => Points(Size);
 
-        public Canvas(int cols, int rows, int colorCount)
+        public Canvas(Point size, int colorCount)
             => (Size, ColorCount, _cells)
-            = (new Point(cols, rows), colorCount, CreateCells(new Point(cols + 1, rows + 1)));
+            = (size, colorCount, CreateCells(size.Diagonal(1)));
 
         public Cell this[Point pos]
         {
@@ -34,13 +40,12 @@ namespace ConsoleDraw.Core
             set => _cells[pos.X, pos.Y] = value;
         }
 
-        internal void FillShape(IShape shape)
+        public void FillShape(IShape shape)
         {
-            shape.Area.ForEach(pos => Paint(pos));
-            this.UpdateMarker();
+            OnCellsChanged(shape.Area.Select(pos => Paint(pos, SelectedColor)));
         }
 
-        internal Cell[] GetShadow(IShape shape) => shape.Area.Select(p => this[p]).Select(c => c.Clone()).ToArray();
+        public Cell[] GetShadow(IShape shape) => shape.Area.Select(p => this[p]).Select(c => c.Clone()).ToArray();
 
         public void RandomFill()
         {
@@ -52,23 +57,7 @@ namespace ConsoleDraw.Core
             area.ForEach(cell => this[cell.Pos].Tag = cell.Tag);
         }
 
-        public Point SetPosition(int x = 0, int y = 0)
-        {
-            var originalPos = new Point(Console.CursorLeft, Console.CursorTop);
-            CurrentPos = new Point(x, y);
-            return originalPos;
-        }
-
         public Cell CurrentCell => this[CurrentPos];
-
-        public void Render()
-        {
-            if (Origin == default)
-                Origin = new Point(Console.CursorLeft, Console.CursorTop);
-            else
-                Console.SetCursorPosition(Origin.X, Origin.Y);
-            CanvasRenderer.Render(this);
-        }
 
         public void Execute(ICommand command)
         {
@@ -82,9 +71,8 @@ namespace ConsoleDraw.Core
             {
                 if (_current == value)
                     return;
-                this.RemoveMarker();
                 _current = value;
-                this.UpdateMarker();
+                OnCurrentPositionChanged();
             }
         }
 
@@ -110,24 +98,44 @@ namespace ConsoleDraw.Core
 
         public void Fill()
         {
-            var area = this.GetArea(CurrentPos);
-            this.Fill(area);
-            this.UpdateMarker();
+            var area = GetArea(CurrentPos);
+            area.ForEach(cell => cell.Color = SelectedColor);
+            OnCellsChanged(area);
+        }
+
+        public IEnumerable<Cell> GetArea(Point center)
+        {
+            var next = this[center];
+            var color = next.Color;
+            var area = new HashSet<Cell> { next };
+            var neighbours = new Stack<Cell>(next.Neighbours(this).Where(n => n.Color == color));
+            while (neighbours.Any())
+            {
+                next = neighbours.Pop();
+                area.Add(next);
+                next.Neighbours(this).Where(n => n.Color == color).Except(area).ForEach(n => neighbours.Push(n));
+            }
+            return area;
         }
 
         public void Plot(Cell cell) => Plot(cell.Pos, cell.Color);
 
-        public void Plot(Point? pos = null, ConsoleColor? color = null)
+        public void Plot()
         {
-            Paint(pos, color);
-            this.UpdateMarker();
+            Plot(CurrentPos, SelectedColor);
         }
 
-        public void Paint(Point? pos = null, ConsoleColor? color = null)
+        public void Plot(Point pos, ConsoleColor color)
         {
-            var cell = this[pos ?? CurrentPos];
-            cell.Color = color ?? SelectedColor;
-            this.Render(cell);
+            Paint(pos, color);
+            OnCellChanged(this[pos]);
+        }
+
+        private Cell Paint(Point pos, ConsoleColor color)
+        {
+            var cell = this[pos];
+            cell.Color = color;
+            return cell;
         }
 
         private void Perform(IExecutable operation)
@@ -159,7 +167,22 @@ namespace ConsoleDraw.Core
             => new Cell
             {
                 Pos = pos,
-                Color = (ConsoleColor)(_rand.Next(colors) + 1)
+                Color = (ConsoleColor)(Rand.Next(colors) + 1)
             };
+
+        private void OnCellChanged(Cell cell)
+        {
+            CellChanged?.Invoke(this, new CellEventArgs(cell));
+        }
+
+        private void OnCellsChanged(IEnumerable<Cell> cells)
+        {
+            CellsChanged?.Invoke(this, new CellsEventArgs(cells));
+        }
+
+        private void OnCurrentPositionChanged()
+        {
+            CurrentPositionChanged?.Invoke(this, new PointEventArgs(CurrentPos));
+        }
     }
 }

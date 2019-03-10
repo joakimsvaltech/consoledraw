@@ -11,21 +11,6 @@ namespace ConsoleDraw.Core.Geometry
             .OrderByDescending(area => area.Length)
             .FirstOrDefault();
 
-        public static IEnumerable<Cell> GetArea(this Canvas grid, Point center)
-        {
-            var next = grid[center];
-            var color = next.Color;
-            var area = new HashSet<Cell> { next };
-            var neighbours = new Stack<Cell>(next.Neighbours(grid).Where(n => n.Color == color));
-            while (neighbours.Any())
-            {
-                next = neighbours.Pop();
-                area.Add(next);
-                next.Neighbours(grid).Where(n => n.Color == color).Except(area).ForEach(n => neighbours.Push(n));
-            }
-            return area;
-        }
-
         public static IEnumerable<Point> To(this Point from, Point to)
             => from == to ? new[] { from } : IsSteep(from, to) ? SteepTo(from, to) : FlatTo(from, to);
 

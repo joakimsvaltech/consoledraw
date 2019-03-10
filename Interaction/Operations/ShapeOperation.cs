@@ -1,5 +1,8 @@
 ﻿using ConsoleDraw.Core.Commands.Operations;
+using ConsoleDraw.Core.Events;
 using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Operations;
 using System;
 using System.Linq;
 
@@ -67,28 +70,27 @@ namespace ConsoleDraw.Core
                 InitShape();
             else if (e.Operation is NavigationOperation)
                 UpdateShape();
-            else
+            else if (!(e.Operation is ColorOperation))
                 ExitShape();
         }
 
         private void InitShape()
         {
             _activeShape = _create(_grid.CurrentPos);
-            _grid.Mark(_activeShape);
+            _grid.Highlight.Area = _activeShape.Outline;
         }
 
         private void ExitShape()
         {
             Deactivated?.Invoke(this, new EventArgs());
             _grid.CommandExecuted -= Grid_CommandExecuted;
-            _grid.Unmark(_activeShape);
+            _grid.Highlight.Area = new Point[0];
         }
 
         private void UpdateShape()
         {
-            _grid.Unmark(_activeShape);
             _activeShape!.Update(_grid.CurrentPos);
-            _grid.Mark(_activeShape);
+            _grid.Highlight.Area = _activeShape.Outline;
         }
     }
 }

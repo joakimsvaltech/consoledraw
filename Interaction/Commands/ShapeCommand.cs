@@ -1,4 +1,5 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core.Events;
+using ConsoleDraw.Core.Interaction;
 using System;
 
 namespace ConsoleDraw.Core

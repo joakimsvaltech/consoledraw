@@ -1,7 +1,7 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core.Interaction;
 using System;
 
-namespace ConsoleDraw.Core
+namespace ConsoleDraw.Core.Events
 {
     public class OperationEventArgs : EventArgs
     {

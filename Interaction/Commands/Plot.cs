@@ -1,4 +1,5 @@
 ﻿using ConsoleDraw.Core.Commands.Operations;
+using ConsoleDraw.Core.Interaction;
 
 namespace ConsoleDraw.Core
 {

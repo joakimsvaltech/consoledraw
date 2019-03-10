@@ -1,9 +1,9 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Core.Interaction;
 using System;
 
 namespace ConsoleDraw.Core
 {
-    public enum Direction { Up, Down, Left, Right}
 
     public class NavigationCommand : CommandBase
     {

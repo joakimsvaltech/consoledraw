@@ -1,4 +1,5 @@
 ﻿using ConsoleDraw.Core;
+using ConsoleDraw.Rendering;
 using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
 using System;
@@ -43,14 +44,19 @@ namespace ConsoleDraw.Genesis
             var rows = Input("number of rows", 10, 50);
             var colors = Input("number of colours", 2, 9);
             Console.WriteLine($"Generating grid with {cols} columns, {rows} rows and {colors} colors");
-            var grid = new Canvas(cols, rows, colors);
+            var originalPosition = new Point(Console.CursorLeft, Console.CursorTop);
+            var grid = new Canvas(new Point(cols, rows), colors);
             grid.RandomFill();
             var largestConnectedArea = grid.FindLargestConnectedArea();
             grid.Annotate(largestConnectedArea);
-            grid.Render();
-            var originalPosition = grid.SetPosition();
+            Console.SetCursorPosition(originalPosition.X, originalPosition.Y);
+            var canvasRenderer = new CanvasRenderer(grid, originalPosition);
+            canvasRenderer.Render();
             var interactor = new Interactor(grid);
-            interactor.Render();
+            var commandRenderer = new CommandRenderer(interactor.Commands, originalPosition * (grid.Size.Y + 1));
+            interactor.Commands.ForEach(c => c.Activated += (o, e) => commandRenderer.Render());
+            interactor.Commands.ForEach(c => c.Inactivated += (o, e) => commandRenderer.Render());
+            commandRenderer.Render();
             while (interactor.Interact()) { }
             Console.SetCursorPosition(originalPosition.X, originalPosition.Y);
         }
