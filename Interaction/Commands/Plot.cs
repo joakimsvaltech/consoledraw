@@ -1,19 +1,19 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
-using ConsoleDraw.Core.Interaction;
+﻿using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Operations;
 
 namespace ConsoleDraw.Core
 {
-    public class Plot : CommandBase
+    public class Plot : Command
     {
         internal Plot(Canvas grid) : base(grid, "_Plot") { }
-        public override IExecutable CreateOperation() => new PlotOperation(Grid);
+        public override IExecutable CreateOperation() => new Operation(Grid);
 
-        private class PlotOperation : UndoableOperation
+        private class Operation : Undoable
         {
             private Cell? _oldCell;
             private Cell? _newCell;
 
-            public PlotOperation(Canvas grid) : base(grid) { }
+            public Operation(Canvas grid) : base(grid) { }
 
             protected override bool DoExecute()
             {

@@ -1,16 +1,19 @@
-﻿using ConsoleDraw.Core.Events;
+﻿using ConsoleDraw.Core;
+using ConsoleDraw.Core.Events;
+using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Operations;
 using System;
 
-namespace ConsoleDraw.Core
+namespace ConsoleDraw.Interaction.Commands
 {
-    public abstract class ShapeCommand<TShapeOperation> : CommandBase
-        where TShapeOperation : class, IShapeOperation
+    public abstract class Shape<TShape> : Command
+        where TShape : class, IShape
     {
-        private TShapeOperation? _activeOperation;
-        private readonly Func<Canvas, TShapeOperation> _create;
+        private IApplyable<TShape>? _activeOperation;
+        private readonly Func<Canvas, IApplyable<TShape>> _create;
 
-        internal ShapeCommand(Canvas grid, string label, Func<Canvas, TShapeOperation> create) : base(grid, label)
+        internal Shape(Canvas grid, string label, Func<Canvas, IApplyable<TShape>> create) : base(grid, label)
         {
             _create = create;
             grid.CommandExecuting += Grid_CommandExecuting;
@@ -21,11 +24,11 @@ namespace ConsoleDraw.Core
         private void Grid_CommandExecuting(object sender, OperationEventArgs e)
         {
             bool wasActive = IsActive;
-            if (e.Operation is TShapeOperation sop)
+            if (e.Operation is IApplyable<TShape> sop)
             {
                 _activeOperation = sop;
                 _activeOperation.Deactivated += ActiveOperation_Deactivated;
-                if (!wasActive) OnActivated();
+                if (!wasActive) OnStatusChanged();
             }
         }
 
@@ -34,7 +37,7 @@ namespace ConsoleDraw.Core
             if (_activeOperation == sender)
             {
                 _activeOperation = null;
-                OnInactivated();
+                OnStatusChanged();
             }
         }
 

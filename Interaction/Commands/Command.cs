@@ -3,16 +3,15 @@ using System;
 
 namespace ConsoleDraw.Core
 {
-    public abstract class CommandBase : ICommand
+    public abstract class Command : ICommand
     {
-        public event EventHandler<EventArgs> Activated;
-        public event EventHandler<EventArgs> Inactivated;
+        public event EventHandler<EventArgs> StatusChanged;
 
-        protected CommandBase(Canvas grid, string label)
+        protected Command(Canvas grid, string label)
             : this(grid, GetKey(label), GetTag(label), GetName(label)) {
         }
 
-        protected CommandBase(Canvas grid, ConsoleKey key = ConsoleKey.NoName, string tag = "", string name = "", ConsoleModifiers modifiers = default)
+        protected Command(Canvas grid, ConsoleKey key = ConsoleKey.NoName, string tag = "", string name = "", ConsoleModifiers modifiers = default)
             => (Grid ,Key, Tag, Name, Modifiers) = (grid, key, tag, name, modifiers);
 
         public string Tag { get; }
@@ -23,18 +22,13 @@ namespace ConsoleDraw.Core
 
         public bool CanRender => !string.IsNullOrEmpty(Tag);
 
-        protected void OnActivated()
+        protected void OnStatusChanged()
         {
-            Activated?.Invoke(this, new EventArgs());
-        }
-
-        protected void OnInactivated()
-        {
-            Inactivated?.Invoke(this, new EventArgs());
+            StatusChanged?.Invoke(this, new EventArgs());
         }
 
         public virtual bool IsActive => false;
-        public virtual bool IsDisabled => false;
+        public virtual bool IsEnabled => true;
 
         public virtual ConsoleColor? NameBackground => null;
         public virtual ConsoleColor? NameForeground => null;

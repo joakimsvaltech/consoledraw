@@ -1,9 +1,9 @@
 ﻿using ConsoleDraw.Core;
 using ConsoleDraw.Rendering;
 using ConsoleDraw.Core.Geometry;
-using ConsoleDraw.Core.Interaction;
 using System;
 using System.Runtime.InteropServices;
+using ConsoleDraw.Interaction;
 
 namespace ConsoleDraw.Genesis
 {

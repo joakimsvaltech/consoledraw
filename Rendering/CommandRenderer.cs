@@ -35,7 +35,7 @@ namespace ConsoleDraw.Core
         {
             Renderer.SetColor(
                 Command.IsActive ? ActiveBackground : DefaultBackground,
-                Command.IsActive ? ActiveForeground : Command.IsDisabled ? DisabledForeground : DefaultForeground);
+                Command.IsActive ? ActiveForeground : Command.IsEnabled ? DefaultForeground : DisabledForeground);
             Console.Write(Command.Tag);
         }
 
@@ -43,15 +43,15 @@ namespace ConsoleDraw.Core
         {
             Renderer.SetColor(
                 DefaultBackground,
-                Command.IsDisabled ? DisabledForeground : DefaultForeground);
+                Command.IsEnabled ? DefaultForeground : DisabledForeground);
             Console.Write(". ");
         }
 
         private void RenderName()
         {
             Renderer.SetColor(
-                Command.IsDisabled ? DefaultBackground : Command.NameBackground ?? DefaultBackground,
-                Command.IsDisabled ? DisabledForeground : Command.NameForeground ?? DefaultForeground);
+                Command.IsEnabled ? Command.NameBackground ?? DefaultBackground : DefaultBackground,
+                Command.IsEnabled ? Command.NameForeground ?? DefaultForeground : DisabledForeground);
             Console.Write(Command.Name);
         }
     }

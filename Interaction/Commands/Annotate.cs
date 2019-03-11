@@ -1,24 +1,24 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
-using ConsoleDraw.Core.Geometry;
+﻿using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Operations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public class AnnotateCommand : CommandBase
+    public class Annotate : Command
     {
-        public AnnotateCommand(Canvas grid) : base(grid, "_Annotate") {}
+        public Annotate(Canvas grid) : base(grid, "_Annotate") {}
 
-        public override IExecutable CreateOperation() => new AnnotateOperation(Grid);
+        public override IExecutable CreateOperation() => new Operation(Grid);
 
-        private class AnnotateOperation : UndoableOperation
+        private class Operation : Undoable
         {
             private Cell[] _oldCells = new Cell[0];
             private Cell[] _newCells = new Cell[0];
 
-            public AnnotateOperation(Canvas grid) : base(grid) { }
+            public Operation(Canvas grid) : base(grid) { }
 
             protected override bool DoExecute()
             {

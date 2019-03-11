@@ -4,8 +4,7 @@ namespace ConsoleDraw.Core.Interaction
 {
     public interface ICommand
     {
-        event EventHandler<EventArgs> Activated;
-        event EventHandler<EventArgs> Inactivated;
+        event EventHandler<EventArgs> StatusChanged;
         ConsoleKey Key { get; }
         ConsoleColor? NameBackground { get; }
         ConsoleColor? NameForeground { get; }
@@ -13,7 +12,7 @@ namespace ConsoleDraw.Core.Interaction
         IExecutable CreateOperation();
         bool CanRender { get; }
         bool IsActive { get; }
-        bool IsDisabled { get; }
+        bool IsEnabled { get; }
         string Tag { get; }
         string Name { get; }
     }

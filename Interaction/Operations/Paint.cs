@@ -1,25 +1,26 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core;
+using ConsoleDraw.Interaction.Operations;
 using System;
 using System.Linq;
 
-namespace ConsoleDraw.Core
+namespace ConsoleDraw.Interaction.Operations
 {
-    public abstract class PaintOperation : UndoableOperation
+    public abstract class Paint : Undoable
     {
         private Cell[] _oldCells = new Cell[0];
         private Cell[] _newCells = new Cell[0];
 
-        public PaintOperation(Canvas grid) : base(grid) { }
+        public Paint(Canvas grid) : base(grid) { }
 
         protected override bool DoExecute()
         {
             _oldCells = GetShadow();
-            Paint();
+            Apply();
             _newCells = GetShadow();
             return !_oldCells.SequenceEqual(_newCells);
         }
 
-        protected abstract void Paint();
+        protected abstract void Apply();
         protected abstract Cell[] GetShadow();
 
         protected override bool DoUndo() => Refill(_newCells, _oldCells);

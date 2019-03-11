@@ -1,10 +1,12 @@
-﻿namespace ConsoleDraw.Core.Commands.Operations
+﻿using ConsoleDraw.Core;
+
+namespace ConsoleDraw.Interaction.Operations
 {
-    public class UndoOperation : UndoableOperation
+    public class Undo : Undoable
     {
-        private readonly UndoCommand _command;
+        private readonly Commands.Undo _command;
         private IUndoable? _undoneOperation;
-        public UndoOperation(UndoCommand command, Canvas grid) : base(grid) => _command = command;
+        public Undo(Commands.Undo command, Canvas grid) : base(grid) => _command = command;
 
         protected override bool DoExecute()
             => (_undoneOperation = _command.Pop())?.Undo() ?? false;

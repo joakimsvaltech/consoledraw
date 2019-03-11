@@ -4,12 +4,12 @@ using System;
 
 namespace ConsoleDraw.Interaction.Operations
 {
-    public class ColorOperation : IExecutable
+    public class SelectColor : IExecutable, IModus
     {
         private readonly ConsoleColor _color;
         private readonly Canvas _grid;
 
-        public ColorOperation(Canvas grid, ConsoleColor color)
+        public SelectColor(Canvas grid, ConsoleColor color)
         {
             _grid = grid;
             _color = color;

@@ -1,9 +1,12 @@
-﻿using ConsoleDraw.Core.Geometry;
+﻿using ConsoleDraw.Core;
+using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Core.Interaction
+namespace ConsoleDraw.Interaction
 {
     public class Interactor
     {
@@ -21,7 +24,7 @@ namespace ConsoleDraw.Core.Interaction
             var command = GetCommand();
             if (command == null)
                 return true;
-            if (command is ExitCommand)
+            if (command is Exit)
                 return false;
             _grid.Execute(command);
             return true;
@@ -38,40 +41,40 @@ namespace ConsoleDraw.Core.Interaction
 
         private ICommand[] GetArrowCommands(Canvas grid)
             => new[] {
-            new NavigationCommand(grid, ConsoleKey.UpArrow, Direction.Up),
-            new NavigationCommand(grid, ConsoleKey.DownArrow, Direction.Down),
-            new NavigationCommand(grid, ConsoleKey.LeftArrow, Direction.Left),
-            new NavigationCommand(grid, ConsoleKey.RightArrow, Direction.Right)
+            new Move(grid, ConsoleKey.UpArrow, Direction.Up),
+            new Move(grid, ConsoleKey.DownArrow, Direction.Down),
+            new Move(grid, ConsoleKey.LeftArrow, Direction.Left),
+            new Move(grid, ConsoleKey.RightArrow, Direction.Right)
         };
 
         private ICommand[] GetActionCommands(Canvas grid)
             => new ICommand[] {
             new Plot(grid),
-            new DrawCommand(grid),
-            new RectangleCommand(grid),
-            new EllipseCommand(grid),
-            new LineCommand(grid),
-            new FillCommand(grid),
-            new RandomFillCommand(grid),
-            new ApplyCommand(grid),
-            new AnnotateCommand(grid),
-            new EscapeCommand(grid),
-            new UndoCommand(grid),
-            new RedoCommand(grid),
-            new ExitCommand(grid),
+            new Draw(grid),
+            new Commands.Rectangle(grid),
+            new Commands.Ellipse(grid),
+            new Commands.Line(grid),
+            new Fill(grid),
+            new RandomFill(grid),
+            new Apply(grid),
+            new Annotate(grid),
+            new Escape(grid),
+            new Undo(grid),
+            new Redo(grid),
+            new Exit(grid),
         };
 
-        private IEnumerable<ColorCommand> GetColorCommands(Canvas grid)
+        private IEnumerable<Color> GetColorCommands(Canvas grid)
             => grid.Colors.Select(color => CreateColorCommand(grid, color));
 
-        private ColorCommand CreateColorCommand(Canvas grid, ConsoleColor color)
-            => new ColorCommand(grid, color);
+        private Color CreateColorCommand(Canvas grid, ConsoleColor color)
+            => new Color(grid, color);
 
         private ICommand? GetCommand()
             => GetCommand(Console.ReadKey(true));
 
         private ICommand? GetCommand(ConsoleKeyInfo keyInfo)
-            => _commands.TryGetValue(keyInfo.Key, out var command)
-            ? command.SingleOrDefault(c => c.Modifiers == keyInfo.Modifiers) : null;
+            => _commands.TryGetValue(keyInfo.Key, out var commands)
+            ? commands.Where(c => c.IsEnabled).SingleOrDefault(c => c.Modifiers == keyInfo.Modifiers) : null;
     }
 }

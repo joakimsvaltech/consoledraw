@@ -1,7 +1,11 @@
-﻿using System;
+﻿using ConsoleDraw.Core.Interaction;
+using System;
 
-namespace ConsoleDraw.Core.Commands.Operations
+namespace ConsoleDraw.Interaction.Operations
 {
+    public interface IApplyable<TShape> : IExecutable, IApplyable
+    {
+    }
 
     public interface IApplyable
     {

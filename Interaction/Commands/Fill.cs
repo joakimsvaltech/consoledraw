@@ -1,19 +1,20 @@
 ﻿using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Operations;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public class FillCommand : CommandBase
+    public class Fill : Command
     {
-        internal FillCommand(Canvas grid) : base(grid, "_Fill") { }
-        public override IExecutable CreateOperation() => new FillOperation(Grid);
+        internal Fill(Canvas grid) : base(grid, "_Fill") { }
+        public override IExecutable CreateOperation() => new Operation(Grid);
 
-        private class FillOperation : PaintOperation
+        private class Operation : Paint
         {
-            public FillOperation(Canvas grid) : base(grid) { }
+            public Operation(Canvas grid) : base(grid) { }
 
-            protected override void Paint()
+            protected override void Apply()
             {
                 Grid.Paint(GetFilledCells());
             }

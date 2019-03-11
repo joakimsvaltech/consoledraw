@@ -1,21 +1,22 @@
 ﻿using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Operations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public class RandomFillCommand : CommandBase
+    public class RandomFill : Command
     {
         private static readonly Random Rand = new Random((int)DateTime.Now.Ticks);
-        internal RandomFillCommand(Canvas grid) : base(grid, ConsoleKey.Z, "Z", "Random fill") { }
-        public override IExecutable CreateOperation() => new RandomFillOperation(Grid);
+        internal RandomFill(Canvas grid) : base(grid, ConsoleKey.Z, "Z", "Random fill") { }
+        public override IExecutable CreateOperation() => new Operation(Grid);
 
-        private class RandomFillOperation : PaintOperation
+        private class Operation : Paint
         {
-            public RandomFillOperation(Canvas grid) : base(grid) { }
+            public Operation(Canvas grid) : base(grid) { }
 
-            protected override void Paint()
+            protected override void Apply()
             {
                 Grid.Paint(GetRandomCells());
             }

@@ -1,15 +1,16 @@
-﻿using ConsoleDraw.Core.Geometry;
+﻿using ConsoleDraw.Core;
+using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
 
-namespace ConsoleDraw.Core.Commands.Operations
+namespace ConsoleDraw.Interaction.Operations
 {
-    public abstract class UndoableOperation : IExecutable, IUndoable
+    public abstract class Undoable : IExecutable, IUndoable
     {
         private Point _oldPosition = new Point();
         private Point _newPosition = new Point();
         protected readonly Canvas Grid;
 
-        protected UndoableOperation(Canvas grid) => Grid = grid;
+        protected Undoable(Canvas grid) => Grid = grid;
 
         public bool Execute()
         {

@@ -18,11 +18,10 @@ namespace ConsoleDraw.Core
             _commands = commands.Where(com => com.CanRender).ToArray();
             _origin = origin;
             _commandRenderers = _commands.ToDictionary(c => c.Tag, c => new CommandRenderer(c));
-            _commands.ForEach(c => c.Activated += Command_Changed);
-            _commands.ForEach(c => c.Inactivated += Command_Changed);
+            _commands.ForEach(c => c.StatusChanged += Command_StatusChanged);
         }
 
-        private void Command_Changed(object o, EventArgs e)
+        private void Command_StatusChanged(object o, EventArgs e)
         {
             _commandRenderers[((ICommand)o).Tag].Render();
         }

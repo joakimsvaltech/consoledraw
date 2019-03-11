@@ -1,16 +1,14 @@
-﻿using ConsoleDraw.Core.Commands.Operations;
+﻿using ConsoleDraw.Core;
 using ConsoleDraw.Core.Events;
 using ConsoleDraw.Core.Geometry;
-using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Interaction.Commands;
 using ConsoleDraw.Interaction.Operations;
 using System;
 using System.Linq;
 
-namespace ConsoleDraw.Core
+namespace ConsoleDraw.Interaction.Operations
 {
-    public interface IShapeOperation : IExecutable, IApplyable { }
-
-    public abstract class ShapeOperation<TShape> : IShapeOperation
+    public abstract class Shape<TShape> : IApplyable<TShape>
         where TShape : class, IShape
     {
         public event EventHandler<EventArgs> Deactivated;
@@ -21,7 +19,7 @@ namespace ConsoleDraw.Core
         private readonly Canvas _grid;
         private readonly Func<Point, TShape> _create;
 
-        public ShapeOperation(Canvas grid, Func<Point, TShape> create)
+        public Shape(Canvas grid, Func<Point, TShape> create)
         {
             _grid = grid;
             _create = create;
@@ -70,9 +68,9 @@ namespace ConsoleDraw.Core
         {
             if (_activeShape == null)
                 InitShape();
-            else if (e.Operation is NavigationOperation)
+            else if (e.Operation is Move)
                 UpdateShape();
-            else if (!(e.Operation is ColorOperation))
+            else if (!(e.Operation is SelectColor))
                 ExitShape();
         }
 

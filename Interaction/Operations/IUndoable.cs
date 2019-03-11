@@ -1,4 +1,4 @@
-﻿namespace ConsoleDraw.Core.Commands.Operations
+﻿namespace ConsoleDraw.Interaction.Operations
 {
     public interface IUndoable
     {
