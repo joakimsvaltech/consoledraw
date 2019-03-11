@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using ConsoleDraw.Core.Geometry;
+using System.Linq;
 
-namespace ConsoleDraw.Core.Geometry
+namespace ConsoleDraw.Geometry
 {
     public class Line : IShape
     {

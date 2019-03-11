@@ -5,6 +5,7 @@
     <LangVersion>8.0</LangVersion>
     <AssemblyName>ConsoleDraw.Geometry</AssemblyName>
     <NullableContextOptions>enable</NullableContextOptions>
+    <RootNamespace>ConsoleDraw.Geometry</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

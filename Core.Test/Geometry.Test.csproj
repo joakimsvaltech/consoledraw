@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
+    <AssemblyName>ConsoleDraw.Geometry.Test</AssemblyName>
+    <RootNamespace>ConsoleDraw.Geometry.Test</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

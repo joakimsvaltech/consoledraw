@@ -1,5 +1,5 @@
 ﻿using ConsoleDraw.Core;
-using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Geometry;
 
 namespace ConsoleDraw.Interaction.Commands
 {

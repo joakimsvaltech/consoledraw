@@ -1,7 +1,8 @@
 ﻿using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Geometry;
 using Xunit;
 
-namespace Core.Test
+namespace ConsoleDraw.Geometry.Test
 {
     public class RectangleTests
     {

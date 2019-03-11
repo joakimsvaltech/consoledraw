@@ -2,7 +2,7 @@
 using System.Linq;
 using Xunit;
 
-namespace Core.Test
+namespace ConsoleDraw.Geometry.Test
 {
     public class PointTests
     {
@@ -53,15 +53,15 @@ namespace Core.Test
         }
 
         [Theory]
-        [InlineData(0, 0, 0, 0, 
+        [InlineData(0, 0, 0, 0,
             0, 0)]
-        [InlineData(0, 0, 1, 0, 
+        [InlineData(0, 0, 1, 0,
             0, 0, 1, 0)]
-        [InlineData(0, 0, 2, 0, 
+        [InlineData(0, 0, 2, 0,
             0, 0, 1, 0, 2, 0)]
-        [InlineData(0, 0, 0, 1, 
+        [InlineData(0, 0, 0, 1,
             0, 0, 0, 1)]
-        [InlineData(2, 3, 2, 4, 
+        [InlineData(2, 3, 2, 4,
             2, 3, 2, 4)]
         [InlineData(2, 3, 0, 3,
             2, 3, 1, 3, 0, 3)]
@@ -79,7 +79,7 @@ namespace Core.Test
             3, 3, 4, 2, 5, 2, 6, 1)]
         [InlineData(3, 3, 6, 4,
             3, 3, 4, 3, 5, 4, 6, 4)]
-        public void To_return_inclusive_range_between_points(int x, int y, int endX, int endY, 
+        public void To_return_inclusive_range_between_points(int x, int y, int endX, int endY,
             params int[] expectedCoords)
         {
             var start = new Point(x, y);

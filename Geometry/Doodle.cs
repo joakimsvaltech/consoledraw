@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using ConsoleDraw.Core.Geometry;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleDraw.Core.Geometry
+namespace ConsoleDraw.Geometry
 {
     public class Doodle : IShape
     {

@@ -2,7 +2,7 @@
 using ConsoleDraw.Core.Geometry;
 using System.Linq;
 
-namespace Core.Test
+namespace ConsoleDraw.Geometry.Test
 {
     public static class TestUtils
     {
