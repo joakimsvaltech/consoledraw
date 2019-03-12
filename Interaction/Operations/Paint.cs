@@ -1,5 +1,4 @@
 ﻿using ConsoleDraw.Core;
-using ConsoleDraw.Interaction.Operations;
 using System;
 using System.Linq;
 

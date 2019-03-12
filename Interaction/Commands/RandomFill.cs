@@ -12,7 +12,7 @@ namespace ConsoleDraw.Core
         internal RandomFill(Canvas grid) : base(grid, ConsoleKey.Z, "Z", "Random fill") { }
         public override IExecutable CreateOperation() => new Operation(Grid);
 
-        private class Operation : Paint
+        private class Operation : PaintAll
         {
             public Operation(Canvas grid) : base(grid) { }
 
@@ -20,8 +20,6 @@ namespace ConsoleDraw.Core
             {
                 Grid.Paint(GetRandomCells());
             }
-
-            protected override Cell[] GetShadow() => Grid.Cells.ToArray();
 
             private IEnumerable<Cell> GetRandomCells()
             {

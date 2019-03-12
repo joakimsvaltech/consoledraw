@@ -1,13 +1,10 @@
-Show enable commands
 Save
-Load
-Outline
-Loop through and mark areas in order of size
-Project structure
-Tests
 
 Done
 -----------
+Load
+Project structure
+Show enable commands
 Redo
 Undo remaining
 Undo Plot

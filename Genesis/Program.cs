@@ -4,6 +4,7 @@ using ConsoleDraw.Core.Geometry;
 using System;
 using System.Runtime.InteropServices;
 using ConsoleDraw.Interaction;
+using Storage;
 
 namespace ConsoleDraw.Genesis
 {
@@ -42,23 +43,31 @@ namespace ConsoleDraw.Genesis
         {
             var canvas = CreateCanvas();
             var origin = new Point(Console.CursorLeft, Console.CursorTop);
-            var interactor = new Interactor(canvas);
-            Render(canvas, interactor, origin);
+            var interactorOrigin = origin * (canvas.Size.Y + 1);
+            var interactor = CreateInteractor();
+            Render();
             while (interactor.Interact()) { }
             Renderer.CursorPosition = origin;
-        }
 
-        private static void Render(Canvas canvas, Interactor interactor, Point origin)
-        {
-            new CanvasRenderer(canvas, origin).Render();
-            new InteractorRenderer(interactor.Commands, origin * (canvas.Size.Y + 1)).Render();
+            void Render()
+            {
+                new CanvasRenderer(canvas, origin).Render();
+                new InteractorRenderer(interactor.Commands, interactorOrigin).Render();
+            }
+
+            Interactor CreateInteractor()
+            {
+                var loader = new Loader();
+                var input = new Input(interactorOrigin * 2);
+                return new Interactor(canvas, loader, input);
+            }
         }
 
         private static Canvas CreateCanvas()
         {
             var cols = Input("number of columns", 10, 200);
             var rows = Input("number of rows", 10, 50);
-            var colors = Input("number of colours", 2, 9);
+            var colors = Input("number of colours", 2, 16);
             Console.WriteLine($"Generating grid with {cols} columns, {rows} rows and {colors} colors");
             return new Canvas(new Point(cols, rows), colors);
         }

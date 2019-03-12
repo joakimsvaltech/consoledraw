@@ -12,5 +12,11 @@
     <ProjectReference Include="..\Geometry\Geometry.csproj" />
     <ProjectReference Include="..\Interaction\Interaction.csproj" />
     <ProjectReference Include="..\Rendering\Rendering.csproj" />
+    <ProjectReference Include="..\Storage\Storage.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="rose.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

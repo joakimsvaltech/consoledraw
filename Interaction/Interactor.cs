@@ -1,6 +1,7 @@
 ﻿using ConsoleDraw.Core;
 using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Core.Storage;
 using ConsoleDraw.Interaction.Commands;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,15 @@ namespace ConsoleDraw.Interaction
     public class Interactor
     {
         private readonly Canvas _grid;
+        private readonly ILoader _loader;
+        private readonly IInput _input;
         private readonly IDictionary<ConsoleKey, ICommand[]> _commands;
 
-        public Interactor(Canvas grid)
+        public Interactor(Canvas grid, ILoader loader, IInput input)
         {
             _grid = grid;
+            _loader = loader;
+            _input = input;
             _commands = GetCommands(grid);
         }
 
@@ -51,9 +56,9 @@ namespace ConsoleDraw.Interaction
             => new ICommand[] {
             new Plot(grid),
             new Draw(grid),
-            new Commands.Rectangle(grid),
-            new Commands.Ellipse(grid),
-            new Commands.Line(grid),
+            new Rectangle(grid),
+            new Ellipse(grid),
+            new Line(grid),
             new Fill(grid),
             new RandomFill(grid),
             new Apply(grid),
@@ -62,6 +67,7 @@ namespace ConsoleDraw.Interaction
             new Undo(grid),
             new Redo(grid),
             new Exit(grid),
+            new Load(_input, _loader, grid),
         };
 
         private IEnumerable<Color> GetColorCommands(Canvas grid)

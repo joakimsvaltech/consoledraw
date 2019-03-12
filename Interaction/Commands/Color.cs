@@ -11,7 +11,15 @@ namespace ConsoleDraw.Core
         public bool _isActive;
 
         public Color(Canvas grid, ConsoleColor color)
-            : base(grid, Enum.Parse<ConsoleKey>($"D{(int)color}"), $"{(int)color}", $"{color}")
+            : this(grid, color, (int)color % 10, (int)color > 9) { }
+
+        private Color(Canvas grid, ConsoleColor color, int colorIndex, bool shift)
+            : base(
+                  grid,
+                  Enum.Parse<ConsoleKey>($"D{colorIndex}"),
+                  $"{colorIndex}",
+                  $"{color}",
+                  shift ? ConsoleModifiers.Shift : default)
         {
             grid.ColorChanged += Grid_ColorChanged;
             _color = color;

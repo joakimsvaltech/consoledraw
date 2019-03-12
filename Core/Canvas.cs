@@ -30,7 +30,7 @@ namespace ConsoleDraw.Core
         public Point Size { get; }
         public Point Origin { get; private set; }
         public int ColorCount { get; }
-        public IEnumerable<ConsoleColor> Colors => Enumerable.Range(1, ColorCount).Select(index => (ConsoleColor)index);
+        public IEnumerable<ConsoleColor> Colors => Enumerable.Range(1, ColorCount).Select(index => (ConsoleColor)(index % 16));
         public IEnumerable<Point> Positions => Points(Size);
 
         public Canvas(Point size, int colorCount)

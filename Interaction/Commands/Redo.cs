@@ -7,7 +7,7 @@ namespace ConsoleDraw.Interaction.Commands
 {
     public class Redo : Revert<Operations.Undo, Redo>
     {
-        internal Redo(Canvas grid) : base(grid, ConsoleKey.U, "Shift-U", "Redo", ConsoleModifiers.Shift)
+        internal Redo(Canvas grid) : base(grid, ConsoleKey.U, "U", "Redo", ConsoleModifiers.Shift)
         {
         }
 
