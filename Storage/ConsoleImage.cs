@@ -23,7 +23,7 @@ namespace Storage
         public ConsoleImage(Image img)
         {
             var bmp = new Bitmap(img);
-            Size = new Point(img.Width / WidthZoomFactor, img.Height / HeightZoomFactor);
+            Size = (img.Width / WidthZoomFactor, img.Height / HeightZoomFactor);
             Cells = new Rectangle(0, 0, Size.X, Size.Y).Area
                 .Select(p => new Cell {
                     Pos = p,

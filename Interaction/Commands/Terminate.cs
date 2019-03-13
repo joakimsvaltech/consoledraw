@@ -1,5 +1,5 @@
 ﻿using ConsoleDraw.Core;
-using ConsoleDraw.Core.Events;
+using ConsoleDraw.Core.Interaction;
 using ConsoleDraw.Interaction.Operations;
 using System;
 
@@ -17,10 +17,10 @@ namespace ConsoleDraw.Interaction.Commands
 
         public override bool IsEnabled => LastOperation != null;
 
-        private void Grid_CommandExecuted(object sender, OperationEventArgs e)
+        private void Grid_CommandExecuted(object sender, EventArgs<IExecutable> e)
         {
             var wasEnabled = IsEnabled;
-            LastOperation = e.Operation switch
+            LastOperation = e.Model switch
             {
                 IModus _ => LastOperation,
                 IApplyable a => a,

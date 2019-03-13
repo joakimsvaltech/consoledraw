@@ -18,7 +18,7 @@ namespace ConsoleDraw.Core
 
         public static Point CursorPosition
         {
-            get => new Point(Console.CursorLeft, Console.CursorTop);
+            get => (Console.CursorLeft, Console.CursorTop);
             set => Console.SetCursorPosition(value.X, value.Y);
         }
     }

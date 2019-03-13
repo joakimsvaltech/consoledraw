@@ -1,5 +1,4 @@
 ﻿using ConsoleDraw.Core;
-using ConsoleDraw.Core.Events;
 using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
 using ConsoleDraw.Interaction.Operations;
@@ -21,10 +20,10 @@ namespace ConsoleDraw.Interaction.Commands
 
         public override IExecutable CreateOperation() => _create(Grid);
 
-        private void Grid_CommandExecuting(object sender, OperationEventArgs e)
+        private void Grid_CommandExecuting(object sender, EventArgs<IExecutable> e)
         {
             bool wasActive = IsActive;
-            if (e.Operation is IApplyable<TShape> sop)
+            if (e.Model is IApplyable<TShape> sop)
             {
                 _activeOperation = sop;
                 _activeOperation.Deactivated += ActiveOperation_Deactivated;

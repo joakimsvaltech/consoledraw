@@ -14,15 +14,15 @@ namespace ConsoleDraw.Geometry
         private int Left => Math.Min(_start.X, _end.X);
         private int Right => Math.Max(_start.X, _end.X);
         private int Width => Right - Left;
-        private Point UpperLeft => new Point(Left, Top);
-        private Point LowerLeft => new Point(Left, Bottom);
-        private Point UpperRight => new Point(Right, Top);
-        private Point LowerRight => new Point(Right, Bottom);
+        private Point UpperLeft => (Left, Top);
+        private Point LowerLeft => (Left, Bottom);
+        private Point UpperRight => (Right, Top);
+        private Point LowerRight => (Right, Bottom);
 
         public Rectangle(Point start, Point? end = null) => (_start, _end) = (start, end ?? start);
 
         public Rectangle(int x, int y, int width, int height)
-            : this(new Point(x, y), new Point(x + width - 1, y + height - 1)) { }
+            : this((x, y), (x + width - 1, y + height - 1)) { }
 
         public void Update(Point point)
         {

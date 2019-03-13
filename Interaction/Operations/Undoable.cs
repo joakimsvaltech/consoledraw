@@ -6,8 +6,8 @@ namespace ConsoleDraw.Interaction.Operations
 {
     public abstract class Undoable : IExecutable, IUndoable
     {
-        private Point _oldPosition = new Point();
-        private Point _newPosition = new Point();
+        private Point _oldPosition;
+        private Point _newPosition;
         protected readonly Canvas Grid;
 
         protected Undoable(Canvas grid) => Grid = grid;

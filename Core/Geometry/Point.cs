@@ -14,19 +14,19 @@ namespace ConsoleDraw.Core.Geometry
             => !left.Equals(right);
 
         public static Point operator +(Point left, Point right)
-            => new Point(left.X + right.X, left.Y + right.Y);
+            => (left.X + right.X, left.Y + right.Y);
 
         public static Point operator -(Point left, Point right)
-            => new Point(left.X - right.X, left.Y - right.Y);
+            => (left.X - right.X, left.Y - right.Y);
 
         public static Point operator +(Point left, int offsetX)
-            => new Point(left.X + offsetX, left.Y);
+            => (left.X + offsetX, left.Y);
 
         public static Point operator *(Point left, int offsetY)
-            => new Point(left.X, left.Y + offsetY);
+            => (left.X, left.Y + offsetY);
 
         public static Point operator %(Point left, Point right)
-            => new Point(left.X % right.X, left.Y % right.Y);
+            => (left.X % right.X, left.Y % right.Y);
 
         public static bool operator <(Point left, Point right)
             => left.X < right.X && left.Y < right.Y;
@@ -40,15 +40,15 @@ namespace ConsoleDraw.Core.Geometry
         public int X { get; }
         public int Y { get; }
 
-        public Point Up => new Point(X, Y - 1);
+        public Point Up => (X, Y - 1);
 
-        public Point Down => new Point(X, Y + 1);
+        public Point Down => (X, Y + 1);
 
-        public Point Left => new Point(X - 1, Y);
+        public Point Left => (X - 1, Y);
 
-        public Point Right => new Point(X + 1, Y);
+        public Point Right => (X + 1, Y);
 
-        public Point Invert() => new Point(Y, X);
+        public Point Invert() => (Y, X);
 
         public override bool Equals(object obj)
             => obj is Point p && Equals(p);
@@ -70,6 +70,6 @@ namespace ConsoleDraw.Core.Geometry
             _ => throw new NotImplementedException()
         };
 
-        public Point Diagonal(int offset) => new Point(X + offset, Y + offset);
+        public Point Diagonal(int offset) => (X + offset, Y + offset);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ConsoleDraw.Core.Geometry;
 using System.Linq;
 using Xunit;
+using static Xunit.Assert;
 
 namespace ConsoleDraw.Geometry.Test
 {
@@ -12,9 +13,9 @@ namespace ConsoleDraw.Geometry.Test
         [InlineData(1, 2, 3, 4, 2)]
         public void When_Plus_OffsetX(int x, int y, int offset, int expectedX, int expectedY)
         {
-            var point = new Point(x, y);
+            Point point = (x, y);
             var result = point + offset;
-            Assert.Equal(result, new Point(expectedX, expectedY));
+            Equal(result, (expectedX, expectedY));
         }
 
         [Theory]
@@ -23,9 +24,9 @@ namespace ConsoleDraw.Geometry.Test
         [InlineData(1, 2, 3, 1, 5)]
         public void When_Multiply_OffsetY(int x, int y, int offset, int expectedX, int expectedY)
         {
-            var point = new Point(x, y);
+            Point point = (x, y);
             var result = point * offset;
-            Assert.Equal(result, new Point(expectedX, expectedY));
+            Equal(result, (expectedX, expectedY));
         }
 
         [Theory]
@@ -34,10 +35,9 @@ namespace ConsoleDraw.Geometry.Test
         [InlineData(1, 2, 3, 4, 4, 6)]
         public void When_Add_Offset_X_And_Y(int x, int y, int offsetX, int offsetY, int expectedX, int expectedY)
         {
-            var point = new Point(x, y);
-            var offset = new Point(offsetX, offsetY);
-            var result = point + offset;
-            Assert.Equal(result, new Point(expectedX, expectedY));
+            Point point = (x, y);
+            var result = point + (offsetX, offsetY);
+            Equal(result, (expectedX, expectedY));
         }
 
         [Theory]
@@ -46,10 +46,9 @@ namespace ConsoleDraw.Geometry.Test
         [InlineData(6, 5, 4, 3, 2, 2)]
         public void When_Modulo_Then_Modulo_X_And_Y(int x, int y, int modX, int modY, int expectedX, int expectedY)
         {
-            var point = new Point(x, y);
-            var offset = new Point(modX, modY);
-            var result = point % offset;
-            Assert.Equal(result, new Point(expectedX, expectedY));
+            Point point = (x, y);
+            var result = point % (modX, modY);
+            Equal(result, (expectedX, expectedY));
         }
 
         [Theory]
@@ -82,11 +81,10 @@ namespace ConsoleDraw.Geometry.Test
         public void To_return_inclusive_range_between_points(int x, int y, int endX, int endY,
             params int[] expectedCoords)
         {
-            var start = new Point(x, y);
-            var end = new Point(endX, endY);
-            var result = start.To(end).ToArray();
+            Point start = (x, y);
+            var result = start.To((endX, endY)).ToArray();
             var expected = TestUtils.GetPoints(expectedCoords);
-            Assert.Equal(expected, result);
+            Equal(expected, result);
         }
     }
 }

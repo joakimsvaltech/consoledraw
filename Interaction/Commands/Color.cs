@@ -1,5 +1,4 @@
-﻿using ConsoleDraw.Core.Events;
-using ConsoleDraw.Core.Interaction;
+﻿using ConsoleDraw.Core.Interaction;
 using ConsoleDraw.Interaction.Operations;
 using System;
 
@@ -26,9 +25,9 @@ namespace ConsoleDraw.Core
             _isActive = Grid.SelectedColor == _color;
         }
 
-        private void Grid_ColorChanged(object sender, ColorEventArgs e)
+        private void Grid_ColorChanged(object sender, EventArgs<ConsoleColor> e)
         {
-            if (IsActive == (Grid.SelectedColor == _color))
+            if (IsActive == (_color == e))
                 return;
             _isActive = !_isActive;
             OnStatusChanged();

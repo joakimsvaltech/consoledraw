@@ -18,7 +18,7 @@ namespace ConsoleDraw.Geometry
             set
             {
                 _end = value;
-                _size = new Point(Math.Abs(_end.X - _start.X), Math.Abs(_end.Y - _start.Y));
+                _size = (Math.Abs(_end.X - _start.X), Math.Abs(_end.Y - _start.Y));
             }
         }
 
@@ -40,23 +40,23 @@ namespace ConsoleDraw.Geometry
             {
                 var midY = startY + height / 2;
                 for (var x = startX; x <= endX; x++)
-                    yield return new Point(x, midY);
+                    yield return (x, midY);
             }
             if (width % 2 == 1)
             {
                 var midX = startX + width / 2;
                 for (var y = startY; y <= endY; y++)
-                    yield return new Point(midX, y);
+                    yield return (midX, y);
             }
             for (var y = 0; y < height / 2; y++)
             {
                 var offset = ComputeOffset(y, width, height);
                 for (var x = offset; x < width / 2; x++)
                 {
-                    yield return new Point(startX + x, startY + y);
-                    yield return new Point(endX - x, startY + y);
-                    yield return new Point(startX + x, endY - y);
-                    yield return new Point(endX - x, endY - y);
+                    yield return (startX + x, startY + y);
+                    yield return (endX - x, startY + y);
+                    yield return (startX + x, endY - y);
+                    yield return (endX - x, endY - y);
                 }
             }
         }
@@ -75,10 +75,10 @@ namespace ConsoleDraw.Geometry
                 var offset = ComputeOffset(y, width, height);
                 for (var x = offset; x <= prevOffset; x++)
                 {
-                    yield return new Point(startX + x, startY + y);
-                    yield return new Point(endX - x, startY + y);
-                    yield return new Point(startX + x, endY - y);
-                    yield return new Point(endX - x, endY - y);
+                    yield return (startX + x, startY + y);
+                    yield return (endX - x, startY + y);
+                    yield return (startX + x, endY - y);
+                    yield return (endX - x, endY - y);
                 }
                 prevOffset = offset;
             }

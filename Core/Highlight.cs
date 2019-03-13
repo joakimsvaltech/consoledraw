@@ -1,5 +1,4 @@
-﻿using ConsoleDraw.Core.Events;
-using ConsoleDraw.Core.Geometry;
+﻿using ConsoleDraw.Core.Geometry;
 using System;
 using System.Linq;
 
@@ -7,7 +6,7 @@ namespace ConsoleDraw.Core
 {
     public class Highlight
     {
-        public event EventHandler<PointsEventArgs> AreaChanged;
+        public event EventHandler<EventArgs<Point[]>> AreaChanged;
 
         private Point[] _area = new Point[0];
 
@@ -18,7 +17,7 @@ namespace ConsoleDraw.Core
             {
                 if (value.SequenceEqual(_area)) return;
                 _area = value;
-                AreaChanged?.Invoke(this, new PointsEventArgs(Area));
+                AreaChanged?.Invoke(this, Area);
             }
         }
     }

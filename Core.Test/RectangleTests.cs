@@ -20,21 +20,19 @@ namespace ConsoleDraw.Geometry.Test
             1, 3,
             2, 3)]
         [InlineData(4, 4, 2, 3,
-            4, 4,
-            3, 4,
-            2, 4,
-            4, 3,
-            3, 3,
-            2, 3)]
+            2,3,
+            3,3,
+            4,3,
+            2,4,
+            3,4,
+            4,4)]
         public void Points_return_all_inner_points_including_edge(int startX, int startY, int endX, int endY,
             params int[] expectedCoords)
         {
-            var start = new Point(startX, startY);
-            var end = new Point(endX, endY);
-            var rect = new Rectangle(start, end);
+            var rect = new Rectangle((startX, startY), (endX, endY));
             var actual = rect.Area;
             var expected = TestUtils.GetPoints(expectedCoords);
-            Assert.Equal(actual, expected);
+            Assert.Equal(expected, actual);
         }
 
         [Theory]
@@ -51,20 +49,18 @@ namespace ConsoleDraw.Geometry.Test
             2, 2,
             2, 3)]
         [InlineData(4, 4, 2, 2,
-            4, 4,
-            3, 4,
-            2, 4,
-            4, 3,
-            4, 2,
-            2, 3,
-            2, 2,
-            3, 2)]
+            2,2,
+            3,2,
+            4,2,
+            2,3,
+            2,4,
+            4,3,
+            4,4,
+            3,4)]
         public void Outline_return_all_points_on_the_edge(int startX, int startY, int endX, int endY,
             params int[] expectedCoords)
         {
-            var start = new Point(startX, startY);
-            var end = new Point(endX, endY);
-            var rect = new Rectangle(start, end);
+            var rect = new Rectangle((startX, startY), (endX, endY));
             var actual = rect.Outline;
             var expected = TestUtils.GetPoints(expectedCoords);
             Assert.Equal(actual, expected);

@@ -1,5 +1,4 @@
-﻿using ConsoleDraw.Core.Events;
-using ConsoleDraw.Core.Geometry;
+﻿using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
 using ConsoleDraw.Core.Storage;
 using System;
@@ -10,15 +9,15 @@ namespace ConsoleDraw.Core
 {
     public class Canvas : IImage
     {
-        public event EventHandler<OperationEventArgs> CommandExecuting;
-        public event EventHandler<OperationEventArgs> CommandExecuted;
-        public event EventHandler<ColorEventArgs> ColorChanged;
-        public event EventHandler<CellsEventArgs> CellsChanged;
-        public event EventHandler<CellEventArgs> CellChanged;
-        public event EventHandler<PointEventArgs> CurrentPositionChanged;
+        public event EventHandler<EventArgs<IExecutable>> CommandExecuting;
+        public event EventHandler<EventArgs<IExecutable>> CommandExecuted;
+        public event EventHandler<EventArgs<ConsoleColor>> ColorChanged;
+        public event EventHandler<EventArgs<Cell[]>> CellsChanged;
+        public event EventHandler<EventArgs<Cell>> CellChanged;
+        public event EventHandler<EventArgs<Point>> CurrentPositionChanged;
 
 
-        private Cell[,] _cells;
+        private readonly Cell[,] _cells;
         private Point _current;
         private ConsoleColor _selectedColor = (ConsoleColor)1;
         public readonly Highlight Highlight = new Highlight();
@@ -90,7 +89,7 @@ namespace ConsoleDraw.Core
                 if (_selectedColor == value)
                     return;
                 _selectedColor = value;
-                ColorChanged?.Invoke(this, new ColorEventArgs(_selectedColor));
+                ColorChanged?.Invoke(this, _selectedColor);
             }
         }
 
@@ -124,9 +123,9 @@ namespace ConsoleDraw.Core
 
         private void Perform(IExecutable operation)
         {
-            CommandExecuting?.Invoke(this, new OperationEventArgs(operation));
+            CommandExecuting?.Invoke(this, new EventArgs<IExecutable>(operation));
             if (operation.Execute())
-                CommandExecuted?.Invoke(this, new OperationEventArgs(operation));
+                CommandExecuted?.Invoke(this, new EventArgs<IExecutable>(operation));
         }
 
         private static Cell[,] CreateCells(Point size)
@@ -145,22 +144,22 @@ namespace ConsoleDraw.Core
         {
             for (int x = 0; x < size.X; x++)
                 for (int y = 0; y < size.Y; y++)
-                    yield return new Point(x, y);
+                    yield return (x, y);
         }
 
         private void OnCellChanged(Cell cell)
         {
-            CellChanged?.Invoke(this, new CellEventArgs(cell));
+            CellChanged?.Invoke(this, cell);
         }
 
         private void OnCellsChanged(IEnumerable<Cell> cells)
         {
-            CellsChanged?.Invoke(this, new CellsEventArgs(cells));
+            CellsChanged?.Invoke(this, cells.ToArray());
         }
 
         private void OnCurrentPositionChanged()
         {
-            CurrentPositionChanged?.Invoke(this, new PointEventArgs(CurrentPos));
+            CurrentPositionChanged?.Invoke(this, CurrentPos);
         }
     }
 }

@@ -44,27 +44,27 @@ namespace ConsoleDraw.Rendering
             points.ForEach(Mark);
         }
 
-        private void Canvas_CellsChanged(object sender, Core.Events.CellsEventArgs e)
+        private void Canvas_CellsChanged(object sender, EventArgs<Cell[]> e)
         {
-            e.Cells.ForEach(Render);
+            e.Model.ForEach(Render);
             Mark(_currentMarkedPos);
         }
 
-        private void Canvas_CellChanged(object sender, Core.Events.CellEventArgs e)
+        private void Canvas_CellChanged(object sender, EventArgs<Cell> e)
         {
-            Render(e.Cell);
+            Render(e);
             Mark(_currentMarkedPos);
         }
 
-        private void Highlight_AreaChanged(object sender, Core.Events.PointsEventArgs e)
+        private void Highlight_AreaChanged(object sender, EventArgs<Point[]> e)
         {
-            if (e.Points.Any())
+            if (e.Model.Any())
             {
                 var remove = _currentMarkedArea
                     .Append(_currentMarkedPos)
-                    .Except(e.Points)
+                    .Except(e.Model)
                     .ToArray();
-                var add = e.Points
+                var add = e.Model
                     .Except(_currentMarkedArea)
                     .ToArray();
                 Unmark(remove);
@@ -75,13 +75,13 @@ namespace ConsoleDraw.Rendering
                 Unmark(_currentMarkedArea);
                 Mark(_currentMarkedPos = _canvas.CurrentPos);
             }
-            _currentMarkedArea = e.Points;
+            _currentMarkedArea = e;
         }
 
-        private void Canvas_CurrentPositionChanged(object sender, Core.Events.PointEventArgs e)
+        private void Canvas_CurrentPositionChanged(object sender, EventArgs<Point> e)
         {
             var oldPos = _currentMarkedPos;
-            _currentMarkedPos = e.Point;
+            _currentMarkedPos = e;
             if (_currentMarkedArea.Any() || oldPos == _currentMarkedPos)
                 return;
             Unmark(oldPos);

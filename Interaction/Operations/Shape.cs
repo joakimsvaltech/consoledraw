@@ -1,8 +1,6 @@
 ﻿using ConsoleDraw.Core;
-using ConsoleDraw.Core.Events;
 using ConsoleDraw.Core.Geometry;
-using ConsoleDraw.Interaction.Commands;
-using ConsoleDraw.Interaction.Operations;
+using ConsoleDraw.Core.Interaction;
 using System;
 using System.Linq;
 
@@ -64,13 +62,13 @@ namespace ConsoleDraw.Interaction.Operations
             return true;
         }
 
-        private void Grid_CommandExecuted(object sender, OperationEventArgs e)
+        private void Grid_CommandExecuted(object sender, EventArgs<IExecutable> e)
         {
             if (_activeShape == null)
                 InitShape();
-            else if (e.Operation is Move)
+            else if (e.Model is Move)
                 UpdateShape();
-            else if (!(e.Operation is SelectColor))
+            else if (!(e.Model is SelectColor))
                 ExitShape();
         }
 
