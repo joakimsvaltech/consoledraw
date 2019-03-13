@@ -1,7 +1,6 @@
 ﻿using ConsoleDraw.Core;
 using ConsoleDraw.Core.Interaction;
 using ConsoleDraw.Interaction.Operations;
-using System.Linq;
 
 namespace ConsoleDraw.Interaction.Commands
 {

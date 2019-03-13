@@ -22,7 +22,7 @@ namespace ConsoleDraw.Core
 
             protected override bool DoExecute()
             {
-                _oldCells = Grid.Cells.Where(c => c.Tag != ' ').ToArray();
+                _oldCells = Grid.Cells.Where(c => c.Brush.Shape != ' ').ToArray();
                 Unnotate(_oldCells);
                 _newCells = GetAnnotations();
                 Grid.Annotate(_newCells);
@@ -44,7 +44,7 @@ namespace ConsoleDraw.Core
 
             private void Unnotate(IEnumerable<Cell> cells)
             {
-                Grid.Annotate(cells.Select(c => c.Clone(' ')));
+                Grid.Annotate(cells.Select(c => c.Clone(' ')).ToArray());
             }
 
             private Cell[] GetAnnotations()
@@ -89,7 +89,7 @@ namespace ConsoleDraw.Core
 
             private Cell[] FindSameColoredNeighbours(Cell cell)
                 => cell.NorthWestNeighbours(Grid)
-                .Where(n => n.Color == cell.Color).ToArray();
+                .Where(n => n.Brush.Background == cell.Brush.Background).ToArray();
 
             private void Replace(int[,] grid, int replace, int with)
             {

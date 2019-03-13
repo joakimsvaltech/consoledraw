@@ -27,7 +27,7 @@ namespace Storage
             Cells = new Rectangle(0, 0, Size.X, Size.Y).Area
                 .Select(p => new Cell {
                     Pos = p,
-                    Color = Average(GetPixels(bmp, p)).ToConsoleColor()
+                    Brush = Average(GetPixels(bmp, p)).ToConsoleColor()
                 });
         }
 
@@ -42,7 +42,7 @@ namespace Storage
 
         private void SetPixels(Bitmap bmp, Cell cell)
         {
-            var color = cell.Color.ToColor();
+            var color = cell.Brush.Background.ToColor();
             GetSubpixelPoints(cell.Pos).ForEach(p => bmp.SetPixel(p.X, p.Y, color));
         }
 

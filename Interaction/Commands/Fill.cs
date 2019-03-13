@@ -21,19 +21,19 @@ namespace ConsoleDraw.Core
 
             protected override Cell[] GetShadow() => GetArea().Select(c => c.Clone()).ToArray();
 
-            private IEnumerable<Cell> GetFilledCells() => GetArea().Select(c => c.Clone(color: Grid.SelectedColor));
+            private IEnumerable<Cell> GetFilledCells() => GetArea().Select(c => c.Clone(bg: Grid.SelectedColor));
 
             private IEnumerable<Cell> GetArea()
             {
                 var next = Grid[Grid.CurrentPos];
-                var color = next.Color;
+                var color = next.Brush.Background;
                 var area = new HashSet<Cell> { next };
-                var neighbours = new Stack<Cell>(next.Neighbours(Grid).Where(n => n.Color == color));
+                var neighbours = new Stack<Cell>(next.Neighbours(Grid).Where(n => n.Brush.Background == color));
                 while (neighbours.Any())
                 {
                     next = neighbours.Pop();
                     area.Add(next);
-                    next.Neighbours(Grid).Where(n => n.Color == color).Except(area).ForEach(n => neighbours.Push(n));
+                    next.Neighbours(Grid).Where(n => n.Brush.Background == color).Except(area).ForEach(n => neighbours.Push(n));
                 }
                 return area;
             }

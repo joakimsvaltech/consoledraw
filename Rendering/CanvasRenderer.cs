@@ -93,19 +93,19 @@ namespace ConsoleDraw.Rendering
         private void Render(Cell cell)
         {
             PositionCursor(cell.Pos);
-            Render(cell, cell.Color, ConsoleColor.White);
+            Render(cell, cell.Brush);
         }
 
         private void Mark(Point pos) => Mark(_canvas[pos]);
 
-        private void Mark(Cell cell) => Render(cell, ConsoleColor.White, ConsoleColor.Black);
+        private void Mark(Cell cell) => Render(cell, (ConsoleColor.White, ConsoleColor.Black));
 
-        private void Render(Cell cell, ConsoleColor bg, ConsoleColor fg)
+        private void Render(Cell cell, Brush brush)
         {
-            Console.BackgroundColor = bg;
-            Console.ForegroundColor = fg;
+            Console.BackgroundColor = brush.Background;
+            Console.ForegroundColor =brush.Foreground;
             PositionCursor(cell.Pos);
-            Console.Write(cell.Tag);
+            Console.Write(brush.Shape);
         }
 
         private void PositionCursor(Point pos)

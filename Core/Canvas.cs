@@ -48,18 +48,17 @@ namespace ConsoleDraw.Core
 
         public void Fill(IShape shape)
         {
-            OnCellsChanged(shape.Area.Select(pos => Paint(pos, SelectedColor)));
+            OnCellsChanged(shape.Area.Select(pos => Paint(pos, SelectedColor)).ToArray());
         }
 
         public void Paint(IEnumerable<Cell> cells)
         {
-            OnCellsChanged(cells.Select(c => Paint(c.Pos, c.Color)));
+            OnCellsChanged(cells.Select(c => Paint(c.Pos, c.Brush)).ToArray());
         }
 
-        public void Annotate(IEnumerable<Cell> cells)
+        public void Annotate(Cell[] cells)
         {
-            cells.ForEach(c => this[c.Pos].Tag = c.Tag);
-            OnCellsChanged(cells);
+            OnCellsChanged(cells.Select(c => Annotate(c.Pos, c.Brush)).ToArray());
         }
 
         public Cell CurrentCell => this[CurrentPos];
@@ -101,23 +100,30 @@ namespace ConsoleDraw.Core
             return true;
         }
 
-        public void Plot(Cell cell) => Plot(cell.Pos, cell.Color);
+        public void Plot(Cell cell) => Plot(cell.Pos, cell.Brush);
 
         public void Plot()
         {
             Plot(CurrentPos, SelectedColor);
         }
 
-        private void Plot(Point pos, ConsoleColor color)
+        private void Plot(Point pos, Brush brush)
         {
-            Paint(pos, color);
+            Paint(pos, brush);
             OnCellChanged(this[pos]);
         }
 
-        private Cell Paint(Point pos, ConsoleColor color)
+        private Cell Paint(Point pos, Brush brush)
         {
             var cell = this[pos];
-            cell.Color = color;
+            cell.Brush = brush;
+            return cell;
+        }
+
+        private Cell Annotate(Point pos, Brush brush)
+        {
+            var cell = this[pos];
+            cell.Brush = (cell.Brush.Background, ConsoleColor.White, brush.Shape);
             return cell;
         }
 
@@ -135,7 +141,7 @@ namespace ConsoleDraw.Core
                 cells[pos.X, pos.Y] = new Cell
                 {
                     Pos = pos,
-                    Color = ConsoleColor.DarkGray
+                    Brush = ConsoleColor.DarkGray
                 };
             return cells;
         }
@@ -152,9 +158,9 @@ namespace ConsoleDraw.Core
             CellChanged?.Invoke(this, cell);
         }
 
-        private void OnCellsChanged(IEnumerable<Cell> cells)
+        private void OnCellsChanged(Cell[] cells)
         {
-            CellsChanged?.Invoke(this, cells.ToArray());
+            CellsChanged?.Invoke(this, cells);
         }
 
         private void OnCurrentPositionChanged()

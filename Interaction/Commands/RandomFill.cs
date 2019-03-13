@@ -24,7 +24,7 @@ namespace ConsoleDraw.Core
             private IEnumerable<Cell> GetRandomCells()
             {
                 var randomizedCells = Grid.Cells.ToArray();
-                randomizedCells.ForEach(c => c.Color = (ConsoleColor)(Rand.Next(Grid.ColorCount) + 1));
+                randomizedCells.ForEach(c => c.Brush = (ConsoleColor)((Rand.Next(Grid.ColorCount) + 1) % 16));
                 return randomizedCells;
             }
         }

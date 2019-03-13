@@ -18,7 +18,7 @@ namespace ConsoleDraw.Storage.Test
         {
             var canvas = new Canvas((width, height), 16);
             var diagonal = canvas.Size.Up.Left.To((0, 0)).ToArray();
-            diagonal.ForEach(p => canvas[p].Color = ConsoleColor.Red);
+            diagonal.ForEach(p => canvas[p].Brush = ConsoleColor.Red);
             var bmp = new ConsoleImage(canvas).ToBitmap();
             foreach (var p in diagonal)
             {

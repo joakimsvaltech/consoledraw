@@ -34,10 +34,9 @@ namespace ConsoleDraw.Genesis
                 Run();
                 Renderer.ResetColor();
                 Console.WriteLine("Press (A) to run again or any other key to quit");
-                var key = Console.ReadKey();
-                if (key.Key == ConsoleKey.A)
-                    continue;
-                else break;
+                if (Console.ReadKey().Key != ConsoleKey.A)
+                    break;
+                Console.Clear();
             }
             while (true);
         }

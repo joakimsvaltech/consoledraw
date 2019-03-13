@@ -8,8 +8,7 @@ namespace ConsoleDraw.Core
     public class Cell : IEquatable<Cell?>
     {
         public Point Pos { get; set; }
-        public ConsoleColor Color { get; set; }
-        public char Tag { get; set; } = ' ';
+        public Brush Brush { get; set; }
 
         public IEnumerable<Cell> Neighbours(Canvas grid)
             => NorthWestNeighbours(grid).Concat(SouthEastNeighbours(grid));
@@ -26,11 +25,10 @@ namespace ConsoleDraw.Core
             if (Pos.Y < grid.Size.Y - 1) yield return grid[Pos.Down];
         }
 
-        public Cell Clone(char? tag = null, ConsoleColor? color = null)
+        public Cell Clone(char? tag = null, ConsoleColor? bg = null, ConsoleColor? fg = null)
             => new Cell
             {
-                Color = color ?? Color,
-                Tag = tag ?? Tag,
+                Brush =  (bg ?? Brush.Background, fg ?? Brush.Foreground, tag ?? Brush.Shape),
                 Pos = Pos
             };
 
@@ -40,15 +38,15 @@ namespace ConsoleDraw.Core
         public static bool operator !=(Cell left, Cell right)
             => !left.Equals(right);
 
-        public override string ToString() => $"{Pos}:{Tag}{(int)Color}";
+        public override string ToString() => $"{Pos}:{Brush}";
 
         public bool Equals(Cell? other)
-            => !(other is null) && other.Pos == Pos && other.Color == Color && other.Tag == Tag;
+            => !(other is null) && other.Pos == Pos && other.Brush == Brush;
 
         public override bool Equals(object obj)
             => Equals(obj as Cell);
 
         public override int GetHashCode()
-            => Pos.GetHashCode() + Color.GetHashCode() + Tag.GetHashCode();
+            => Pos.GetHashCode() + Brush.GetHashCode();
     }
 }
