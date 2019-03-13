@@ -1,7 +1,11 @@
-﻿namespace ConsoleDraw.Core.Storage
+﻿using ConsoleDraw.Core.Geometry;
+using System.Collections.Generic;
+
+namespace ConsoleDraw.Core.Storage
 {
     public interface IImage
     {
-        Cell[] Cells { get; set; }
+        IEnumerable<Cell> Cells { get; }
+        Point Size { get; }
     }
 }

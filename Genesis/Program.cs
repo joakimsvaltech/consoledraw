@@ -2,9 +2,11 @@
 using ConsoleDraw.Rendering;
 using ConsoleDraw.Core.Geometry;
 using System;
+using System.Configuration;
 using System.Runtime.InteropServices;
 using ConsoleDraw.Interaction;
 using Storage;
+using System.IO;
 
 namespace ConsoleDraw.Genesis
 {
@@ -22,6 +24,7 @@ namespace ConsoleDraw.Genesis
 
         static void Main()
         {
+            Directory.SetCurrentDirectory(ConfigurationManager.AppSettings["Directory"] + "Images");
             Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
             ShowWindow(ThisConsole, MAXIMIZE);
             Console.WriteLine("CONSOLE DRAW - 'Where your imagination becomes reality'");
@@ -57,7 +60,7 @@ namespace ConsoleDraw.Genesis
 
             Interactor CreateInteractor()
             {
-                var loader = new Loader();
+                var loader = new Repository();
                 var input = new Input(interactorOrigin * 2);
                 return new Interactor(canvas, loader, input);
             }

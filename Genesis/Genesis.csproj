@@ -8,15 +8,16 @@
     <RootNamespace>ConsoleDraw.Genesis</RootNamespace>  
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="rose.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Geometry\Geometry.csproj" />
     <ProjectReference Include="..\Interaction\Interaction.csproj" />
     <ProjectReference Include="..\Rendering\Rendering.csproj" />
     <ProjectReference Include="..\Storage\Storage.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="rose.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

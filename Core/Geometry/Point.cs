@@ -34,6 +34,9 @@ namespace ConsoleDraw.Core.Geometry
         public static bool operator >(Point left, Point right)
             => left.X > right.X && left.Y > right.Y;
 
+        public static implicit operator Point((int x, int y) t)
+            => new Point(t.x, t.y);
+
         public int X { get; }
         public int Y { get; }
 

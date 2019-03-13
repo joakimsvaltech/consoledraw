@@ -1,13 +1,14 @@
 ﻿using ConsoleDraw.Core.Events;
 using ConsoleDraw.Core.Geometry;
 using ConsoleDraw.Core.Interaction;
+using ConsoleDraw.Core.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleDraw.Core
 {
-    public class Canvas
+    public class Canvas : IImage
     {
         public event EventHandler<OperationEventArgs> CommandExecuting;
         public event EventHandler<OperationEventArgs> CommandExecuted;
@@ -15,30 +16,30 @@ namespace ConsoleDraw.Core
         public event EventHandler<CellsEventArgs> CellsChanged;
         public event EventHandler<CellEventArgs> CellChanged;
         public event EventHandler<PointEventArgs> CurrentPositionChanged;
-        
 
-        private readonly Cell[,] _cells;
+
+        private Cell[,] _cells;
         private Point _current;
         private ConsoleColor _selectedColor = (ConsoleColor)1;
         public readonly Highlight Highlight = new Highlight();
+        public Canvas(Point size, int colorCount)
+        {
+            Size = size;
+            _cells = CreateCells(Size.Diagonal(1));
+            ColorCount = colorCount;
+        }
 
         public IEnumerable<Cell> Cells => _cells
-            .OfType<Cell>()
-            .Where(c => c.Pos.X < Size.X && c.Pos.Y < Size.Y)
-            .Select(c => c.Clone());
+                   .OfType<Cell>()
+                   .Where(c => c.Pos.X < Size.X && c.Pos.Y < Size.Y)
+                   .Select(c => c.Clone());
 
         public Point Size { get; }
+
         public Point Origin { get; private set; }
         public int ColorCount { get; }
         public IEnumerable<ConsoleColor> Colors => Enumerable.Range(1, ColorCount).Select(index => (ConsoleColor)(index % 16));
         public IEnumerable<Point> Positions => Points(Size);
-
-        public Canvas(Point size, int colorCount)
-        {
-            Size = size;
-            ColorCount = colorCount;
-            _cells = CreateCells(size.Diagonal(1));
-        }
 
         public Cell this[Point pos]
         {

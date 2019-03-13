@@ -1,7 +1,8 @@
 ﻿namespace ConsoleDraw.Core.Storage
 {
-    public interface ILoader
+    public interface IRepository
     {
-        IImage LoadFile(string filename);
+        IImage Load(string filename);
+        void Save(string filename, IImage image);
     }
 }

@@ -22,7 +22,7 @@ namespace ConsoleDraw.Geometry
         public Rectangle(Point start, Point? end = null) => (_start, _end) = (start, end ?? start);
 
         public Rectangle(int x, int y, int width, int height)
-            : this(new Point(x, y), new Point(x + width, y + height)) { }
+            : this(new Point(x, y), new Point(x + width - 1, y + height - 1)) { }
 
         public void Update(Point point)
         {

@@ -25,6 +25,11 @@ namespace ConsoleDraw.Genesis
             return Console.ReadLine();
         }
 
+        public void Respond(string message)
+        {
+            Console.WriteLine(message);
+        }
+
         private void ClearLine()
         {
             Console.WriteLine("                                                                                               ");

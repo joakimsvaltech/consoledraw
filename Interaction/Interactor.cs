@@ -12,11 +12,11 @@ namespace ConsoleDraw.Interaction
     public class Interactor
     {
         private readonly Canvas _grid;
-        private readonly ILoader _loader;
+        private readonly IRepository _loader;
         private readonly IInput _input;
         private readonly IDictionary<ConsoleKey, ICommand[]> _commands;
 
-        public Interactor(Canvas grid, ILoader loader, IInput input)
+        public Interactor(Canvas grid, IRepository loader, IInput input)
         {
             _grid = grid;
             _loader = loader;
@@ -68,6 +68,7 @@ namespace ConsoleDraw.Interaction
             new Redo(grid),
             new Exit(grid),
             new Load(_input, _loader, grid),
+            new Save(_input, _loader, grid),
         };
 
         private IEnumerable<Color> GetColorCommands(Canvas grid)

@@ -1,38 +1,41 @@
 ﻿using ConsoleDraw.Core;
 using ConsoleDraw.Core.Interaction;
 using ConsoleDraw.Core.Storage;
-using System.Linq;
 
 namespace ConsoleDraw.Interaction.Commands
 {
-    public class Load : Command
+    public class Save : Command
     {
         private readonly IInput _input;
         private readonly IRepository _repository;
 
-        public Load(IInput input, IRepository repository, Canvas grid) : base(grid, "S-_Load") {
+        public Save(IInput input, IRepository repository, Canvas grid) : base(grid, "S-_Save")
+        {
             _input = input;
             _repository = repository;
         }
 
         public override IExecutable CreateOperation() => new Operation(_input, _repository, Grid);
 
-        private class Operation : PaintAll
+        private class Operation : IExecutable
         {
             private readonly IInput _input;
             private readonly IRepository _repository;
+            private readonly IImage _image;
 
-            public Operation(IInput input, IRepository repository, Canvas grid) : base(grid)
+            public Operation(IInput input, IRepository loader, IImage image)
             {
                 _input = input;
-                _repository = repository;
+                _repository = loader;
+                _image = image;
             }
 
-            protected override void Apply()
+            public bool Execute()
             {
                 var filename = _input.Get("Filename");
-                var image = _repository.Load(filename);
-                Grid.Paint(image.Cells.Where(c => c.Pos < Grid.Size));
+                _repository.Save(filename, _image);
+                _input.Respond("File saved!");
+                return true;
             }
         }
     }
