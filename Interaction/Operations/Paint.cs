@@ -30,7 +30,7 @@ namespace ConsoleDraw.Interaction.Operations
         {
             if (from.SequenceEqual(to))
                 return false;
-            Grid.Paint(to);
+            Canvas.Paint(to);
             return true;
         }
     }

@@ -32,7 +32,7 @@ namespace ConsoleDraw.Interaction.Commands
             {
                 var filename = _input.Get("Filename");
                 var image = _repository.Load(filename);
-                Grid.Paint(image.Cells.Where(c => c.Pos < Grid.Size));
+                Canvas.Paint(image.Cells.Where(c => c.Pos < Canvas.Size));
             }
         }
     }

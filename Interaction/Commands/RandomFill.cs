@@ -18,13 +18,13 @@ namespace ConsoleDraw.Core
 
             protected override void Apply()
             {
-                Grid.Paint(GetRandomCells());
+                Canvas.Paint(GetRandomCells());
             }
 
             private IEnumerable<Cell> GetRandomCells()
             {
-                var randomizedCells = Grid.Cells.ToArray();
-                randomizedCells.ForEach(c => c.Brush = (ConsoleColor)((Rand.Next(Grid.ColorCount) + 1) % 16));
+                var randomizedCells = Canvas.Cells.ToArray();
+                randomizedCells.ForEach(c => c.Brush = (ConsoleColor)((Rand.Next(Canvas.ColorCount) + 1) % 16));
                 return randomizedCells;
             }
         }

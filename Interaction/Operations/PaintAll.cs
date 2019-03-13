@@ -7,6 +7,6 @@ namespace ConsoleDraw.Core
     {
         protected PaintAll(Canvas grid) : base(grid) { }
 
-        protected override Cell[] GetShadow() => Grid.Cells.ToArray();
+        protected override Cell[] GetShadow() => Canvas.Cells.ToArray();
     }
 }

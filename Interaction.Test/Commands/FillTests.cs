@@ -1,4 +1,6 @@
 ﻿using ConsoleDraw.Core;
+using ConsoleDraw.Core.Geometry;
+using ConsoleDraw.Geometry;
 using ConsoleDraw.Geometry.Test;
 using System;
 using System.Linq;
@@ -10,17 +12,21 @@ namespace ConsoleDraw.Interaction.Test.Commands
     public class FillTests
     {
         [Theory]
-        [InlineData(1, 10, 10, 5, 5)]
-        [InlineData(10, 10, 10, 5, 5
-            , 2, 2, 3, 2, 4, 2, 2, 6, 3, 7, 4, 8, 5, 9)]
-        [InlineData(200, 100, 100, 50, 50)]
-        public void FillEfficiently(int expectedMs, int width, int height, int x, int y
-            , params int[] obstacleCoords)
+        [InlineData(5, 10, 10)]
+        [InlineData(10, 5, 5)]
+        [InlineData(100, 100, 100)]
+        [InlineData(400, 200, 200)]
+        [InlineData(800, 300, 300)]
+        public void FillEfficiently(int expectedMs, int w, int h)
         {
-            var canvas = new Canvas((width, height), 16);
+            var x = 1;
+            var y = h / 2;
+            var canvas = new Canvas((w, h), 16);
             var cmd = new Fill(canvas);
             var op = cmd.CreateOperation();
-            var obstacles = TestUtils.GetPoints(obstacleCoords);
+            var obstacles = new Point(1, 1).To((w - 2, h - 2))
+                .Concat(new Point(w - 2, 1).To((1, h - 2)))
+                .ToArray();
             obstacles.ForEach(o => canvas.Plot(new Cell
             {
                 Pos = o,

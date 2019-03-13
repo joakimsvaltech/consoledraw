@@ -17,9 +17,9 @@ namespace ConsoleDraw.Core
 
             protected override bool DoExecute()
             {
-                _oldCell = Grid.CurrentCell.Clone();
-                Grid.Plot();
-                _newCell = Grid.CurrentCell.Clone();
+                _oldCell = Canvas.CurrentCell.Clone();
+                Canvas.Plot();
+                _newCell = Canvas.CurrentCell.Clone();
                 return _oldCell! != _newCell!;
             }
 
@@ -31,7 +31,7 @@ namespace ConsoleDraw.Core
             {
                 if (to is null || to == from!)
                     return false;
-                Grid.Plot(to);
+                Canvas.Plot(to);
                 return true;
             }
         }

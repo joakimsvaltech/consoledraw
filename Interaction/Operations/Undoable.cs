@@ -8,28 +8,28 @@ namespace ConsoleDraw.Interaction.Operations
     {
         private Point _oldPosition;
         private Point _newPosition;
-        protected readonly Canvas Grid;
+        protected readonly Canvas Canvas;
 
-        protected Undoable(Canvas grid) => Grid = grid;
+        protected Undoable(Canvas grid) => Canvas = grid;
 
         public bool Execute()
         {
-            _oldPosition = Grid.CurrentPos;
+            _oldPosition = Canvas.CurrentPos;
             return DoExecute();
         }
 
         public bool Undo()
         {
-            _newPosition = Grid.CurrentPos;
+            _newPosition = Canvas.CurrentPos;
             var res = DoUndo();
-            Grid.CurrentPos = _oldPosition;
+            Canvas.CurrentPos = _oldPosition;
             return res || _newPosition != _oldPosition;
         }
 
         public bool Redo()
         {
             var res = DoRedo();
-            Grid.CurrentPos = _newPosition;
+            Canvas.CurrentPos = _newPosition;
             return res || _newPosition != _oldPosition;
         }
 

@@ -22,10 +22,10 @@ namespace ConsoleDraw.Core
 
             protected override bool DoExecute()
             {
-                _oldCells = Grid.Cells.Where(c => c.Brush.Shape != ' ').ToArray();
+                _oldCells = Canvas.Cells.Where(c => c.Brush.Shape != ' ').ToArray();
                 Unnotate(_oldCells);
                 _newCells = GetAnnotations();
-                Grid.Annotate(_newCells);
+                Canvas.Annotate(_newCells);
                 return !_oldCells.SequenceEqual(_newCells);
             }
 
@@ -38,13 +38,13 @@ namespace ConsoleDraw.Core
                 if (from.SequenceEqual(to))
                     return false;
                 Unnotate(from);
-                Grid.Annotate(to);
+                Canvas.Annotate(to);
                 return true;
             }
 
             private void Unnotate(IEnumerable<Cell> cells)
             {
-                Grid.Annotate(cells.Select(c => c.Clone(' ')).ToArray());
+                Canvas.Annotate(cells.Select(c => c.Clone(' ')).ToArray());
             }
 
             private Cell[] GetAnnotations()
@@ -54,9 +54,9 @@ namespace ConsoleDraw.Core
 
             private Cell[][] FindConnectedAreas()
             {
-                var indices = new int[Grid.Size.X + 1, Grid.Size.Y + 1];
+                var indices = new int[Canvas.Size.X + 1, Canvas.Size.Y + 1];
                 var nextIndex = 1;
-                foreach (var cell in Grid.Cells)
+                foreach (var cell in Canvas.Cells)
                 {
                     var sameColoredNeighbours = FindSameColoredNeighbours(cell);
                     if (sameColoredNeighbours.Any())
@@ -74,12 +74,12 @@ namespace ConsoleDraw.Core
                     }
                 }
                 var areas = new Dictionary<int, List<Cell>>();
-                foreach (Point pos in Grid.Positions)
+                foreach (Point pos in Canvas.Positions)
                 {
                     var areaIndex = indices[pos.X, pos.Y];
                     if (!areas.TryGetValue(areaIndex, out var area))
                         areas[areaIndex] = area = new List<Cell>();
-                    area.Add(Grid[pos]);
+                    area.Add(Canvas[pos]);
                 }
                 return areas
                     .OrderByDescending(p => p.Value.Count)
@@ -88,7 +88,7 @@ namespace ConsoleDraw.Core
             }
 
             private Cell[] FindSameColoredNeighbours(Cell cell)
-                => cell.NorthWestNeighbours(Grid)
+                => cell.NorthWestNeighbours(Canvas)
                 .Where(n => n.Brush.Background == cell.Brush.Background).ToArray();
 
             private void Replace(int[,] grid, int replace, int with)
