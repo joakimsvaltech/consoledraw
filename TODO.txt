@@ -1,7 +1,6 @@
-Save
-
 Done
 -----------
+Save
 Load
 Project structure
 Show enable commands
